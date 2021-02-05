@@ -17,18 +17,19 @@ command:
 
 ## Quick install
 
--1. you can install this into cargo bin path:
+1. you can install this into cargo bin path:
 
 ```
 cargo install aki-gsub
 ```
 
--2. you can build debian package:
+2. you can build debian package:
 
 ```
 cargo deb
 ```
-    and install .deb into your local repository of debian package.
+
+and install --.deb-- into your local repository of debian package.
 
 ## Examples
 
