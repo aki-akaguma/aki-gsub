@@ -1,0 +1,7 @@
+Options:
+  -e, --expression <exp>   regular expression
+  -f, --format <fmt>       replace format
+  -n, --quiet              no output unmach lines
+
+  -H, --help     display this help and exit
+  -V, --version  display version information and exit
