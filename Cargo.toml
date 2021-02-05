@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.16"
+version = "0.1.17"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command
