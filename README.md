@@ -1,16 +1,16 @@
-# rust-gsub
+# aki-gsub
 
-*rust-gsub* is the substitude text program.
+*aki-gsub* is the substitude text program.
 
 ## Features
 
-*rust-gsub*  is the substitude text by regex.
+*aki-gsub*  is the substitude text by regex.
 
 * example
 
 command:
 ```
-`rust-gsub` -H
+`aki-gsub` -H
 ```
 
 * minimum support rustc 1.38.0
@@ -20,7 +20,7 @@ command:
 -1. you can install this into cargo bin path:
 
 ```
-cargo install rust-gsub
+cargo install aki-gsub
 ```
 
 -2. you can build debian package:
@@ -33,5 +33,5 @@ cargo deb
 ## Examples
 
 ```
-cat text-file | rust-gsub -e "^name: *(.*)$" -f "\$1"
+cat text-file | aki-gsub -e "^name: *(.*)$" -f "\$1"
 ```
