@@ -2,6 +2,12 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.19 (2021-02-07)
+=====
+Feature:
+
+* update crates flood-tide-gen
+
 0.1.18 (2021-02-05)
 =====
 Feature:
