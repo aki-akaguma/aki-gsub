@@ -1,4 +1,4 @@
-use flood_tide_gen::gen_src_help;
+use flood_tide_gen::{gen_src_help, SrcHelpFlags};
 use flood_tide_gen::gen_src_match;
 use flood_tide_gen::parse_input_file;
 use flood_tide_gen::update_file;
@@ -9,7 +9,7 @@ pub fn do_gen_src() -> anyhow::Result<()> {
     //
     fix_type(&mut vec_optstr);
     //
-    let sss = gen_src_help(&vec_optstr, &vec_line)?;
+    let sss = gen_src_help(&vec_optstr, &vec_line, SrcHelpFlags::default())?;
     update_file(&sss, "src/conf/cmd.help.rs.txt")?;
     //
     let sss = gen_src_match(&vec_optstr)?;
