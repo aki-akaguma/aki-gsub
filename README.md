@@ -33,6 +33,17 @@ and install **.deb** into your local repository of debian package.
 
 ## Examples
 
+command line:
 ```
 cat text-file | aki-gsub -e "^name: *(.*)$" -f "\$1"
+```
+
+command line:
+```text
+echo "abcabca" | aki-gsub -e "a(b)c" -f "*\$1*"
+```
+
+result output:
+```text
+*b**b*a
 ```
