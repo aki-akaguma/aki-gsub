@@ -16,6 +16,22 @@
 //!   -V, --version  display version information and exit
 //! ```
 //!
+//! # Examples
+//!
+//! command line:
+//! ```text
+//! echo "abcabca" | aki-gsub -e "a(b)c" -f "*\$1*"
+//! ```
+//!
+//! result output:
+//! ```text
+//! *b**b*a
+//! ```
+//!
+//! See [`fn execute()`] for this library examples.
+//!
+//! [`fn execute()`]: crate::execute
+//!
 
 #[macro_use]
 extern crate anyhow;
@@ -25,7 +41,7 @@ mod run;
 mod util;
 
 use flood_tide::HelpVersion;
-use runnel::*;
+use runnel::StreamIoe;
 use std::io::Write;
 
 const TRY_HELP_MSG: &str = "Try --help for help.";
@@ -44,25 +60,24 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 ///
 /// example:
 ///
-/// ```
-/// use runnel::medium::stdioe::{StreamInStdin,StreamOutStdout,StreamErrStderr};
+/// ```rust
 /// use runnel::StreamIoe;
+/// use runnel::medium::stdio::{StdErr, StdIn, StdOut};
 ///
-/// let r = libaki_gsub::execute(&StreamIoe{
-///     sin: Box::new(StreamInStdin::default()),
-///     sout: Box::new(StreamOutStdout::default()),
-///     serr: Box::new(StreamErrStderr::default()),
+/// let r = libaki_gsub::execute(&StreamIoe {
+///     pin: Box::new(StdIn::default()),
+///     pout: Box::new(StdOut::default()),
+///     perr: Box::new(StdErr::default()),
 /// }, "gsub", &["-e", "a(b)c", "-f", "$1"]);
 /// ```
 ///
-pub fn execute(sioe: &StreamIoe, program: &str, args: &[&str]) -> anyhow::Result<()> {
-    //
-    let conf = match conf::parse_cmdopts(program, args) {
+pub fn execute(sioe: &StreamIoe, prog_name: &str, args: &[&str]) -> anyhow::Result<()> {
+    let conf = match conf::parse_cmdopts(prog_name, args) {
         Ok(conf) => conf,
         Err(errs) => {
             for err in errs.iter().take(1) {
                 if err.is_help() || err.is_version() {
-                    let _r = sioe.sout.lock().write_fmt(format_args!("{}\n", err));
+                    let _r = sioe.pout.lock().write_fmt(format_args!("{}\n", err));
                     return Ok(());
                 }
             }

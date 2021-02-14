@@ -2,6 +2,14 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.20 (2021-02-14)
+=====
+Feature:
+
+* update crate runnel
+* add doc
+* rename section "AAA-admin" to "AAA-text" of package.metadata.deb
+
 0.1.19 (2021-02-07)
 =====
 Feature:

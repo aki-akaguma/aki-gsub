@@ -22,8 +22,8 @@ static GLOBAL: std::alloc::System = std::alloc::System;
 
 use libaki_gsub::execute;
 
-use runnel::medium::stdioe::*;
-use runnel::*;
+use runnel::medium::stdio::{StdErr, StdIn, StdOut};
+use runnel::StreamIoe;
 
 use std::io::Write;
 
@@ -34,17 +34,16 @@ fn main() {
     let env_args: Vec<&str> = env_args.iter().map(std::string::String::as_str).collect();
     //
     let sioe = StreamIoe {
-        sin: Box::new(StreamInStdin::default()),
-        sout: Box::new(StreamOutStdout::default()),
-        serr: Box::new(StreamErrStderr::default()),
+        pin: Box::new(StdIn::default()),
+        pout: Box::new(StdOut::default()),
+        perr: Box::new(StdErr::default()),
     };
     //
     match execute(&sioe, &program, &env_args) {
         Ok(_) => {}
         Err(err) => {
-            let _ = sioe
-                .serr
-                .lock()
+            #[rustfmt::skip]
+            let _ = sioe.perr.lock()
                 .write_fmt(format_args!("{}: {}\n", program, err));
             std::process::exit(1);
         }
