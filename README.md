@@ -29,7 +29,7 @@ cargo install aki-gsub
 cargo deb
 ```
 
-and install --.deb-- into your local repository of debian package.
+and install **.deb** into your local repository of debian package.
 
 ## Examples
 
