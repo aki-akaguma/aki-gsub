@@ -2,6 +2,14 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.21 (2021-02-22)
+=====
+Feature:
+
+* fix bug: add flush() on finish.
+* update crate: runnel, flood-tide-gen
+* add more doc
+
 0.1.20 (2021-02-14)
 =====
 Feature:

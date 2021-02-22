@@ -53,19 +53,19 @@ macro_rules! do_execute {
         do_execute!($args, "")
     };
     ($args:expr, $sin:expr) => {{
-        let sioe = StreamIoe {
-            pin: Box::new(StringIn::with_str($sin)),
-            pout: Box::new(StringOut::default()),
-            perr: Box::new(StringErr::default()),
-        };
+        let sioe = RunnelIoe::new(
+            Box::new(StringIn::with_str($sin)),
+            Box::new(StringOut::default()),
+            Box::new(StringErr::default()),
+        );
         let program = env!("CARGO_PKG_NAME");
         let r = execute(&sioe, &program, $args);
         match r {
             Ok(_) => {}
             Err(ref err) => {
                 #[rustfmt::skip]
-                                let _ = sioe.perr.lock()
-                                    .write_fmt(format_args!("{}: {}\n", program, err));
+                    let _ = sioe.perr().lock()
+                        .write_fmt(format_args!("{}: {}\n", program, err));
             }
         };
         (r, sioe)
@@ -74,17 +74,17 @@ macro_rules! do_execute {
 
 macro_rules! buff {
     ($sioe:expr, serr) => {
-        $sioe.perr.lock().buffer_str()
+        $sioe.perr().lock().buffer_str()
     };
     ($sioe:expr, sout) => {
-        $sioe.pout.lock().buffer_str()
+        $sioe.pout().lock().buffer_str()
     };
 }
 
 mod test_s0 {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
-    use runnel::StreamIoe;
+    use runnel::RunnelIoe;
     use std::io::Write;
     //
     #[test]
@@ -136,7 +136,7 @@ mod test_s0 {
 mod test_s1 {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
-    use runnel::StreamIoe;
+    use runnel::RunnelIoe;
     use std::io::Write;
     //
     #[test]
@@ -175,7 +175,7 @@ mod test_s1 {
 mod test_s2 {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
-    use runnel::StreamIoe;
+    use runnel::RunnelIoe;
     use std::io::Write;
     //
     #[test]
@@ -198,7 +198,7 @@ mod test_s2 {
 mod test_s3 {
     /*
     use libaki_gsub::*;
-    use runnel::StreamIoe;
+    use runnel::RunnelIoe;
     use runnel::medium::stringio::{StringIn, StringOut, StringErr};
     use std::io::Write;
     //
@@ -212,7 +212,7 @@ mod test_s3 {
 mod test_s4 {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
-    use runnel::StreamIoe;
+    use runnel::RunnelIoe;
     use std::io::Write;
     //
     //
