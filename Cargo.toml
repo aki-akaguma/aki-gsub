@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.20"
+version = "0.1.21"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command
@@ -29,7 +29,8 @@ default = []
 regex = "1.4"
 anyhow = "1.0"
 flood-tide = { version="0.1", default-features=true, features=["stop_at_mm"] }
-runnel = "0.2"
+runnel = "0.3"
+#runnel = { path="../../lib/runnel" }
 
 [dev-dependencies]
 

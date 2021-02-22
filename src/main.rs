@@ -22,8 +22,7 @@ static GLOBAL: std::alloc::System = std::alloc::System;
 
 use libaki_gsub::execute;
 
-use runnel::medium::stdio::{StdErr, StdIn, StdOut};
-use runnel::StreamIoe;
+use runnel::RunnelIoeBuilder;
 
 use std::io::Write;
 
@@ -33,17 +32,13 @@ fn main() {
     let program = env!("CARGO_PKG_NAME");
     let env_args: Vec<&str> = env_args.iter().map(std::string::String::as_str).collect();
     //
-    let sioe = StreamIoe {
-        pin: Box::new(StdIn::default()),
-        pout: Box::new(StdOut::default()),
-        perr: Box::new(StdErr::default()),
-    };
+    let sioe = RunnelIoeBuilder::new().build();
     //
     match execute(&sioe, &program, &env_args) {
         Ok(_) => {}
         Err(err) => {
             #[rustfmt::skip]
-            let _ = sioe.perr.lock()
+            let _ = sioe.perr().lock()
                 .write_fmt(format_args!("{}: {}\n", program, err));
             std::process::exit(1);
         }

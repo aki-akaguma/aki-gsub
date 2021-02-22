@@ -53,10 +53,10 @@ fn parse_match(conf: &mut CmdOptConf, nv: &NameVal<'_>) -> Result<(), OptParseEr
     Ok(())
 }
 
-pub fn parse_cmdopts(program: &str, args: &[&str]) -> Result<CmdOptConf, OptParseErrors> {
+pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, OptParseErrors> {
     //
     let mut conf = CmdOptConf {
-        opt_program: program.to_string(),
+        prog_name: a_prog_name.to_string(),
         ..Default::default()
     };
     let (opt_free, r_errs) =
@@ -65,14 +65,14 @@ pub fn parse_cmdopts(program: &str, args: &[&str]) -> Result<CmdOptConf, OptPars
     if conf.is_help() {
         let mut errs = OptParseErrors::new();
         errs.push(OptParseError::help_message(&help_message(
-            &conf.opt_program,
+            &conf.prog_name,
         )));
         return Err(errs);
     }
     if conf.is_version() {
         let mut errs = OptParseErrors::new();
         errs.push(OptParseError::version_message(&version_message(
-            &conf.opt_program,
+            &conf.prog_name,
         )));
         return Err(errs);
     }

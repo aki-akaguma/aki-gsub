@@ -1,10 +1,10 @@
 use crate::conf::{CmdOptConf, RegexAndFormat};
 use crate::util::err::BrokenPipeError;
 use regex::{Captures, Regex};
-use runnel::StreamIoe;
+use runnel::RunnelIoe;
 use std::io::{BufRead, Write};
 
-pub fn run(sioe: &StreamIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
+pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
     let mut regfmts: Vec<RegexAndFormat> = Vec::new();
     for i in 0..conf.opt_expression.len() {
         let pat = &conf.opt_expression[i];
@@ -85,11 +85,11 @@ fn format(line_offset: usize, caps: &Captures<'_>, fmt: &str) -> ReplacedOut {
 }
 
 fn do_match_proc(
-    sioe: &StreamIoe,
+    sioe: &RunnelIoe,
     conf: &CmdOptConf,
     regfmts: &[RegexAndFormat],
 ) -> anyhow::Result<()> {
-    for line in sioe.pin.lock().lines() {
+    for line in sioe.pin().lock().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
         let line_len: usize = line_ss.len();
@@ -136,11 +136,15 @@ fn do_match_proc(
                 out_s.push_str(&line_ss[prev_ed..]);
             }
             //
-            sioe.pout.lock().write_fmt(format_args!("{}\n", out_s))?
+            #[rustfmt::skip]
+            sioe.pout().lock().write_fmt(format_args!("{}\n", out_s))?;
         } else if !conf.flg_quiet {
-            sioe.pout.lock().write_fmt(format_args!("{}\n", line_ss))?
+            #[rustfmt::skip]
+            sioe.pout().lock().write_fmt(format_args!("{}\n", line_ss))?;
         }
     }
+    //
+    sioe.pout().lock().flush()?;
     //
     Ok(())
 }
