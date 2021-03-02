@@ -1,10 +1,10 @@
 # aki-gsub
 
-*aki-gsub* is the substitude text program.
+*aki-gsub* is the substitude text command, replace via regex.
 
 ## Features
 
-*aki-gsub*  is the substitude text by regex.
+*aki-gsub*  is the substitude text command, replace via regex.
 
 * command help
 
@@ -16,15 +16,27 @@ aki-gsub --help
 Usage:
   aki-gsub [options]
 
-replace string by rust lang.
+substitude text command, replace via regex.
 
 Options:
-  -e, --expression <exp>   regular expression
-  -f, --format <fmt>       replace format
-  -n, --quiet              no output unmach lines
+  -e, --exp <exp>       regular expression
+  -f, --format <fmt>    replace format
+  -n, --quiet           no output unmach lines
 
-  -H, --help     display this help and exit
-  -V, --version  display version information and exit
+  -H, --help        display this help and exit
+  -V, --version     display version information and exit
+
+Examples:
+  Leaving one character between 'a' and 'c', converts 'a' and 'c'
+  on both sides to '*':
+    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+  result output:
+    *b**b*a
+
+  Converts 'a' to '*' and 'c' to '@'.
+    echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
+  result output:
+    *b@*b@*
 ```
 
 * minimum support rustc 1.38.0
