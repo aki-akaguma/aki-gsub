@@ -2,6 +2,14 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.22 (2021-03-02)
+=====
+Feature:
+
+* change option: '-e, --expression' to '-e, --exp'
+* update crate: flood-tide-gen
+* add some documents
+
 0.1.21 (2021-02-22)
 =====
 Feature:

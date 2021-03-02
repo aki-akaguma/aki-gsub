@@ -6,17 +6,27 @@ macro_rules! help_msg {
             "Usage:\n",
             "  aki-gsub [options]\n",
             "\n",
-            "replace string by rust lang.\n",
+            "substitude text command, replace via regex.\n",
             "\n",
             "Options:\n",
-            "  -e, --expression <exp>   regular expression\n",
-            "  -f, --format <fmt>       replace format\n",
-            "  -n, --quiet              no output unmach lines\n",
+            "  -e, --exp <exp>       regular expression\n",
+            "  -f, --format <fmt>    replace format\n",
+            "  -n, --quiet           no output unmach lines\n",
             "\n",
-            "  -H, --help     display this help and exit\n",
-            "  -V, --version  display version information and exit\n",
+            "  -H, --help        display this help and exit\n",
+            "  -V, --version     display version information and exit\n",
             "\n",
+            "Examples:\n",
+            "  Leaving one character between 'a' and 'c', converts 'a' and 'c'\n",
+            "  on both sides to '*':\n",
+            "    echo \"abcabca\" | aki-gsub -e \"a(.)c\" -f \"*\\$1*\"\n",
+            "  result output:\n",
+            "    *b**b*a\n",
             "\n",
+            "  Converts 'a' to '*' and 'c' to '@'.\n",
+            "    echo \"abcabca\" | aki-gsub -e \"a\" -f \"*\" -e \"c\" -f \"@\"\n",
+            "  result output:\n",
+            "    *b@*b@*\n",
             "\n",
         )
     };
@@ -64,8 +74,8 @@ macro_rules! do_execute {
             Ok(_) => {}
             Err(ref err) => {
                 #[rustfmt::skip]
-                    let _ = sioe.perr().lock()
-                        .write_fmt(format_args!("{}: {}\n", program, err));
+                            let _ = sioe.perr().lock()
+                                .write_fmt(format_args!("{}: {}\n", program, err));
             }
         };
         (r, sioe)

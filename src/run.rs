@@ -6,8 +6,8 @@ use std::io::{BufRead, Write};
 
 pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
     let mut regfmts: Vec<RegexAndFormat> = Vec::new();
-    for i in 0..conf.opt_expression.len() {
-        let pat = &conf.opt_expression[i];
+    for i in 0..conf.opt_exp.len() {
+        let pat = &conf.opt_exp[i];
         let fmt = &conf.opt_format[i];
         let re = Regex::new(pat)?;
         regfmts.push(RegexAndFormat {

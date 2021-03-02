@@ -9,22 +9,25 @@ include!("cmd.help.rs.txt");
 
 //{{{ TEXT
 const DESCRIPTIONS_TEXT: &str = r#"
-replace string by rust lang.
+substitude text command, replace via regex.
 "#;
-const ARGUMENTS_TEXT: &str = r#""#;
-const EXAMPLES_TEXT: &str = r#""#;
 /*
 const ARGUMENTS_TEXT: &str = r#"Argument:
   <url>                     url to getting, protocol is http or ftp
 "#;
-
-const EXAMPLES_TEXT: &str = r#"Examples:
-  You  can specify multiple URLs or parts of URLs by writing part sets within braces as in:
-    curl "http://site.{one,two,three}.comn"
-  you can get sequences of alphanumeric series by using [] as in:
-    curl "ftp://ftp.example.com/file[1-100].txt"
-"#;
 */
+const EXAMPLES_TEXT: &str = r#"Examples:
+  Leaving one character between 'a' and 'c', converts 'a' and 'c'
+  on both sides to '*':
+    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+  result output:
+    *b**b*a
+
+  Converts 'a' to '*' and 'c' to '@'.
+    echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
+  result output:
+    *b@*b@*
+"#;
 //}}} TEXT
 
 //----------------------------------------------------------------------
@@ -43,8 +46,7 @@ fn usage_message(program: &str) -> String {
 fn help_message(program: &str) -> String {
     let ver = version_message(program);
     let usa = usage_message(env!("CARGO_PKG_NAME"));
-    [ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT,
-        ARGUMENTS_TEXT, EXAMPLES_TEXT].join("\n")
+    [ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT, EXAMPLES_TEXT].join("\n")
 }
 
 //----------------------------------------------------------------------
@@ -64,9 +66,7 @@ pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, Opt
     //
     if conf.is_help() {
         let mut errs = OptParseErrors::new();
-        errs.push(OptParseError::help_message(&help_message(
-            &conf.prog_name,
-        )));
+        errs.push(OptParseError::help_message(&help_message(&conf.prog_name)));
         return Err(errs);
     }
     if conf.is_version() {
@@ -84,10 +84,10 @@ pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, Opt
             OptParseErrors::new()
         };
         //
-        if conf.opt_expression.is_empty() {
+        if conf.opt_exp.is_empty() {
             errs.push(OptParseError::missing_option("e"));
         }
-        if conf.opt_expression.len() != conf.opt_format.len() {
+        if conf.opt_exp.len() != conf.opt_format.len() {
             errs.push(OptParseError::missing_option("e or f"));
         }
         //
