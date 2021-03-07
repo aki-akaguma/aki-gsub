@@ -11,7 +11,7 @@ dependencies = [
 
 [[package]]
 name = "aki-gsub"
-version = "0.1.22"
+version = "0.1.23"
 dependencies = [
  "anyhow",
  "flood-tide",
@@ -57,9 +57,9 @@ checksum = "0ee1c47aaa256ecabcaea351eae4a9b01ef39ed810004e298d2511ed284b1525"
 
 [[package]]
 name = "once_cell"
-version = "1.7.1"
+version = "1.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea78b9742c52ac729753c1590e9adc5248ea9bdaf974597efd46c74cfaa5fb54"
+checksum = "af8b08b04175473088b46763e51ee54da5f9a164bc162f615b91bc179dbf15a3"
 
 [[package]]
 name = "regex"
@@ -81,9 +81,9 @@ checksum = "b5eb417147ba9860a96cfe72a0b93bf88fee1744b5636ec99ab20c1aa9376581"
 
 [[package]]
 name = "runnel"
-version = "0.3.0"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5bd102a18a9e1402942c423398d0349c57796bd5bcb3345bf50ed53201568354"
+checksum = "1ecdcd0154c8e8cfddfb3190f1e6a75709f5e35ea15bd5a17dd39b6170b8fdb9"
 dependencies = [
  "rustc_version",
 ]
