@@ -46,6 +46,7 @@
 //!
 //! The `\$1` mean 1st capture.
 //!
+//!
 //! ## Example 2: extracting email address
 //!
 //! This extracts the email address and prints the name and address in commas.
@@ -62,6 +63,23 @@
 //!
 //! The `\$1` mean 1st capture.
 //! The `\$2` mean 2nd capture.
+//!
+//!
+//! ## Example 3: multiple format
+//!
+//! You can specify multiple formats. See following.
+//!
+//! command line:
+//! ```text
+//! echo "xxx yyy zzz" | aki-gsub -e "x(x)x" -f "a\$1a" -e "y(y)y" -f "b\$1b"
+//! ```
+//!
+//! result output:
+//! ```text
+//! axa byb zzz
+//! ```
+//!
+//! The `\$1` mean 1st capture.
 //!
 //! # Library example
 //!

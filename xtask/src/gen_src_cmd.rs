@@ -5,7 +5,7 @@ use flood_tide_gen::{gen_src_help, SrcHelpFlags};
 use flood_tide_gen::{MetaType, OptStr};
 
 pub fn do_gen_src() -> anyhow::Result<()> {
-    let (mut vec_optstr, vec_line) = parse_input_file("xtask/src/cmd.txt")?;
+    let (mut vec_optstr, vec_line) = parse_input_file("xtask/src/aki-gsub-cmd.txt")?;
     //
     fix_type(&mut vec_optstr);
     //
@@ -21,21 +21,6 @@ pub fn do_gen_src() -> anyhow::Result<()> {
 fn fix_type(vec_optstr: &mut [OptStr]) {
     for v in vec_optstr {
         let v_meta_type = match v.lon.as_str() {
-            /*
-            "connect-timeout" => MetaType::U32,
-            "continue-at" => MetaType::U64,
-            "expect100-timeout" => MetaType::U32,
-            "happy-eyeballs-timeout-ms" => MetaType::U64,
-            "keepalive-time" => MetaType::U32,
-            "limit-rate" => MetaType::U64,
-            "max-filesize" => MetaType::U64,
-            "max-redirs" => MetaType::U32,
-            "max-time" => MetaType::U32,
-            "retry" => MetaType::U32,
-            "retry-delay" => MetaType::U32,
-            "retry-max-time" => MetaType::U32,
-            "speed-limit" => MetaType::U64,
-            */
             "speed-time" => MetaType::U32,
             "tftp-blksize" => MetaType::U32,
             _ => v.meta_type.clone(),

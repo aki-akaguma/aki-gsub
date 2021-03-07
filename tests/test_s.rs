@@ -74,8 +74,8 @@ macro_rules! do_execute {
             Ok(_) => {}
             Err(ref err) => {
                 #[rustfmt::skip]
-                            let _ = sioe.perr().lock()
-                                .write_fmt(format_args!("{}: {}\n", program, err));
+                                let _ = sioe.perr().lock()
+                                    .write_fmt(format_args!("{}: {}\n", program, err));
             }
         };
         (r, sioe)
