@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.23"
+version = "0.1.24"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command, replace via regex.
@@ -34,7 +34,7 @@ runnel = "0.3"
 [dev-dependencies]
 
 [build-dependencies]
-rustc_version = "=0.2.3"
+rustc_version = "0.3"
 
 [workspace]
 members = [
