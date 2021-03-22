@@ -19,12 +19,22 @@ Usage:
 substitude text command, replace via regex.
 
 Options:
+      --color <when>    use markers to highlight the matching strings
   -e, --exp <exp>       regular expression
   -f, --format <fmt>    replace format
   -n, --quiet           no output unmach lines
 
   -H, --help        display this help and exit
   -V, --version     display version information and exit
+
+Option Parameters:
+  <when>    'always', 'never', or 'auto'
+  <exp>     regular expression can has capture groups
+  <fmt>     format can has capture group: $0, $1, $2, ...
+
+Environments:
+  AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi
+  AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi
 
 Examples:
   Leaving one character between 'a' and 'c', converts 'a' and 'c'
@@ -33,7 +43,7 @@ Examples:
   result output:
     *b**b*a
 
-  Converts 'a' to '*' and 'c' to '@'.
+  Converts 'a' to '*' and 'c' to '@':
     echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
   result output:
     *b@*b@*
@@ -56,6 +66,7 @@ cargo deb
 ```
 
 and install **.deb** into your local repository of debian package.
+
 
 ## Examples
 
@@ -116,3 +127,7 @@ The `\$1` mean 1st capture.
 See [`fn execute()`] for this library examples.
 
 [`fn execute()`]: crate::execute
+
+## Changelogs
+
+[This crate's changelog here.](https://github.com/aki-akaguma/aki-gsub/blob/main/CHANGELOG.md)

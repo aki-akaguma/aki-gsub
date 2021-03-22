@@ -1,10 +1,11 @@
-use crate::conf::{CmdOptConf, RegexAndFormat};
+use crate::conf::{CmdOptConf, EnvConf, RegexAndFormat};
 use crate::util::err::BrokenPipeError;
+use crate::util::OptColorWhen;
 use regex::{Captures, Regex};
 use runnel::RunnelIoe;
 use std::io::{BufRead, Write};
 
-pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
+pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result<()> {
     let mut regfmts: Vec<RegexAndFormat> = Vec::new();
     for i in 0..conf.opt_exp.len() {
         let pat = &conf.opt_exp[i];
@@ -15,7 +16,7 @@ pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
             regex: re,
         });
     }
-    let r = do_match_proc(sioe, conf, &regfmts);
+    let r = do_match_proc(sioe, conf, env, &regfmts);
     if r.is_broken_pipe() {
         return Ok(());
     }
@@ -87,12 +88,22 @@ fn format(line_offset: usize, caps: &Captures<'_>, fmt: &str) -> ReplacedOut {
 fn do_match_proc(
     sioe: &RunnelIoe,
     conf: &CmdOptConf,
+    env: &EnvConf,
     regfmts: &[RegexAndFormat],
 ) -> anyhow::Result<()> {
+    let color_start_s = env.color_seq_start.as_str();
+    let color_end_s = env.color_seq_end.as_str();
+    let color_is_alyways = if let OptColorWhen::Always = conf.opt_color {
+        true
+    } else {
+        false
+    };
+    //
     for line in sioe.pin().lock().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
         let line_len: usize = line_ss.len();
+        //
         //
         let mut routs: Vec<ReplacedOut> = Vec::new();
         //
@@ -128,7 +139,13 @@ fn do_match_proc(
                     prev_ed = rout.ed;
                     break;
                 }
+                if color_is_alyways {
+                    out_s.push_str(color_start_s);
+                }
                 out_s.push_str(rout.out_s.as_str());
+                if color_is_alyways {
+                    out_s.push_str(color_end_s);
+                }
                 //
                 prev_ed = rout.ed;
             }

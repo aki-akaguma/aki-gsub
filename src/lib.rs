@@ -3,25 +3,35 @@
 //! ```text
 //! Usage:
 //!   aki-gsub [options]
-//!
+//! 
 //! substitude text command, replace via regex.
-//!
+//! 
 //! Options:
+//!       --color <when>    use markers to highlight the matching strings
 //!   -e, --exp <exp>       regular expression
 //!   -f, --format <fmt>    replace format
 //!   -n, --quiet           no output unmach lines
-//!
+//! 
 //!   -H, --help        display this help and exit
 //!   -V, --version     display version information and exit
-//!
+//! 
+//! Option Parameters:
+//!   <when>    'always', 'never', or 'auto'
+//!   <exp>     regular expression can has capture groups
+//!   <fmt>     format can has capture group: $0, $1, $2, ...
+//! 
+//! Environments:
+//!   AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi
+//!   AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi
+//! 
 //! Examples:
 //!   Leaving one character between 'a' and 'c', converts 'a' and 'c'
 //!   on both sides to '*':
 //!     echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
 //!   result output:
 //!     *b**b*a
-//!
-//!   Converts 'a' to '*' and 'c' to '@'.
+//! 
+//!   Converts 'a' to '*' and 'c' to '@':
 //!     echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
 //!   result output:
 //!     *b@*b@*
@@ -90,7 +100,7 @@
 #[macro_use]
 extern crate anyhow;
 
-mod conf;
+pub mod conf;
 mod run;
 mod util;
 
@@ -142,6 +152,16 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// The `$2` mean 2nd capture.
 ///
 pub fn execute(sioe: &RunnelIoe, prog_name: &str, args: &[&str]) -> anyhow::Result<()> {
+    let env = conf::EnvConf::new();
+    execute_env(sioe, prog_name, args, &env)
+}
+
+pub fn execute_env(
+    sioe: &RunnelIoe,
+    prog_name: &str,
+    args: &[&str],
+    env: &conf::EnvConf,
+) -> anyhow::Result<()> {
     let conf = match conf::parse_cmdopts(prog_name, args) {
         Ok(conf) => conf,
         Err(errs) => {
@@ -154,5 +174,5 @@ pub fn execute(sioe: &RunnelIoe, prog_name: &str, args: &[&str]) -> anyhow::Resu
             return Err(anyhow!("{}\n{}", errs, TRY_HELP_MSG));
         }
     };
-    run::run(sioe, &conf)
+    run::run(sioe, &conf, &env)
 }

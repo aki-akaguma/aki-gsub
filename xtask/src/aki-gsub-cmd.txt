@@ -1,4 +1,5 @@
 Options:
+      --color <when>    use markers to highlight the matching strings
   -e, --exp <exp>       regular expression
   -f, --format <fmt>    replace format
   -n, --quiet           no output unmach lines

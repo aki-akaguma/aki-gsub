@@ -21,8 +21,11 @@ pub fn do_gen_src() -> anyhow::Result<()> {
 fn fix_type(vec_optstr: &mut [OptStr]) {
     for v in vec_optstr {
         let v_meta_type = match v.lon.as_str() {
+            /*
             "speed-time" => MetaType::U32,
             "tftp-blksize" => MetaType::U32,
+            */
+            "color" => MetaType::Other("opt_color_when".to_string()),
             _ => v.meta_type.clone(),
         };
         //

@@ -4,6 +4,9 @@ use flood_tide::HelpVersion;
 use flood_tide::{Arg, NameVal, Opt, OptNum};
 use flood_tide::{OptParseError, OptParseErrors};
 
+use crate::util::OptColorWhen;
+use std::str::FromStr;
+
 //----------------------------------------------------------------------
 include!("cmd.help.rs.txt");
 
@@ -11,11 +14,16 @@ include!("cmd.help.rs.txt");
 const DESCRIPTIONS_TEXT: &str = r#"
 substitude text command, replace via regex.
 "#;
-/*
-const ARGUMENTS_TEXT: &str = r#"Argument:
-  <url>                     url to getting, protocol is http or ftp
+const PARAMS_TEXT: &str = r#"Option Parameters:
+  <when>    'always', 'never', or 'auto'
+  <exp>     regular expression can has capture groups
+  <fmt>     format can has capture group: $0, $1, $2, ...
 "#;
-*/
+//const ARGUMENTS_TEXT: &str = r#""#;
+const ENV_TEXT: &str = r#"Environments:
+  AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi
+  AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi
+"#;
 const EXAMPLES_TEXT: &str = r#"Examples:
   Leaving one character between 'a' and 'c', converts 'a' and 'c'
   on both sides to '*':
@@ -23,7 +31,7 @@ const EXAMPLES_TEXT: &str = r#"Examples:
   result output:
     *b**b*a
 
-  Converts 'a' to '*' and 'c' to '@'.
+  Converts 'a' to '*' and 'c' to '@':
     echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
   result output:
     *b@*b@*
@@ -46,7 +54,21 @@ fn usage_message(program: &str) -> String {
 fn help_message(program: &str) -> String {
     let ver = version_message(program);
     let usa = usage_message(env!("CARGO_PKG_NAME"));
-    [ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT, EXAMPLES_TEXT].join("\n")
+    [ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT, PARAMS_TEXT, ENV_TEXT, EXAMPLES_TEXT].join("\n")
+}
+
+//----------------------------------------------------------------------
+fn value_to_opt_color_when(nv: &NameVal<'_>) -> Result<OptColorWhen, OptParseError> {
+    match nv.val {
+        Some(s) => match FromStr::from_str(s) {
+            Ok(color) => Ok(color),
+            Err(err) => Err(OptParseError::invalid_option_argument(
+                &nv.opt.lon,
+                &err.to_string(),
+            )),
+        },
+        None => Ok(OptColorWhen::Auto),
+    }
 }
 
 //----------------------------------------------------------------------
@@ -59,6 +81,7 @@ pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, Opt
     //
     let mut conf = CmdOptConf {
         prog_name: a_prog_name.to_string(),
+        opt_color: OptColorWhen::Never,
         ..Default::default()
     };
     let (opt_free, r_errs) =
@@ -89,6 +112,13 @@ pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, Opt
         }
         if conf.opt_exp.len() != conf.opt_format.len() {
             errs.push(OptParseError::missing_option("e or f"));
+        }
+        if conf.opt_color == OptColorWhen::Auto {
+            if atty::is(atty::Stream::Stdout) {
+                conf.opt_color = OptColorWhen::Always;
+            } else {
+                conf.opt_color = OptColorWhen::Never;
+            }
         }
         //
         if let Some(free) = opt_free {

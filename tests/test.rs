@@ -11,12 +11,22 @@ macro_rules! help_msg {
             "substitude text command, replace via regex.\n",
             "\n",
             "Options:\n",
+            "      --color <when>    use markers to highlight the matching strings\n",
             "  -e, --exp <exp>       regular expression\n",
             "  -f, --format <fmt>    replace format\n",
             "  -n, --quiet           no output unmach lines\n",
             "\n",
             "  -H, --help        display this help and exit\n",
             "  -V, --version     display version information and exit\n",
+            "\n",
+            "Option Parameters:\n",
+            "  <when>    'always', 'never', or 'auto'\n",
+            "  <exp>     regular expression can has capture groups\n",
+            "  <fmt>     format can has capture group: $0, $1, $2, ...\n",
+            "\n",
+            "Environments:\n",
+            "  AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi\n",
+            "  AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi\n",
             "\n",
             "Examples:\n",
             "  Leaving one character between 'a' and 'c', converts 'a' and 'c'\n",
@@ -25,7 +35,7 @@ macro_rules! help_msg {
             "  result output:\n",
             "    *b**b*a\n",
             "\n",
-            "  Converts 'a' to '*' and 'c' to '@'.\n",
+            "  Converts 'a' to '*' and 'c' to '@':\n",
             "    echo \"abcabca\" | aki-gsub -e \"a\" -f \"*\" -e \"c\" -f \"@\"\n",
             "  result output:\n",
             "    *b@*b@*\n",
@@ -113,7 +123,6 @@ mod test_0 {
 
 mod test_1 {
     use crate::helper::exec_target_with_in;
-    //use exec_target::args_from;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -163,11 +172,99 @@ mod test_1 {
         assert_eq!(oup.stdout, "a\n");
         assert_eq!(oup.status.success(), true);
     }
-} // mod test_1
+}
+
+mod test_1_color {
+    use crate::helper::exec_target_with_env_in;
+    use std::collections::HashMap;
+    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    //
+    macro_rules! color_start {
+        //() => { "\u{1B}[01;31m" }
+        () => {
+            "<S>"
+        };
+    }
+    macro_rules! color_end {
+        //() => {"\u{1B}[0m"}
+        () => {
+            "<E>"
+        };
+    }
+    macro_rules! env_1 {
+        () => {{
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert(
+                "AKI_GSUB_COLOR_SEQ_ST".to_string(),
+                color_start!().to_string(),
+            );
+            env.insert(
+                "AKI_GSUB_COLOR_SEQ_ED".to_string(),
+                color_end!().to_string(),
+            );
+            env
+        }};
+    }
+    //
+    #[test]
+    fn test_t1() {
+        let env = env_1!();
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            &["-e", "a", "-f", "1", "--color", "always"],
+            env,
+            b"abcabca" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "<S>1<E>bc<S>1<E>bc<S>1<E>\n");
+        assert_eq!(oup.status.success(), true);
+    }
+    //
+    #[test]
+    fn test_t2() {
+        let env = env_1!();
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            &["-e", "a(b)c", "-f", "$1", "--color", "always"],
+            env,
+            b"abcabca" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "<S>b<E><S>b<E>a\n");
+        assert_eq!(oup.status.success(), true);
+    }
+    //
+    #[test]
+    fn test_t3() {
+        let env = env_1!();
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            &["-e", "a(b)c", "-f", "$0", "--color", "always"],
+            env,
+            b"abcabca" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "<S>abc<E><S>abc<E>a\n");
+        assert_eq!(oup.status.success(), true);
+    }
+    //
+    #[test]
+    fn test_t4() {
+        let env = env_1!();
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            &["-e", "a(b)c", "-f", "$2", "--color", "always"],
+            env,
+            b"abcabca" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "<S><E><S><E>a\n");
+        assert_eq!(oup.status.success(), true);
+    }
+}
 
 mod test_2 {
     use crate::helper::exec_target_with_in;
-    //use exec_target::args_from;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -193,7 +290,74 @@ mod test_2 {
         assert_eq!(oup.stdout, "1bc1bc1\n1bc1bc1\n");
         assert_eq!(oup.status.success(), true);
     }
-} // mod test_2
+}
+
+mod test_2_color {
+    use crate::helper::exec_target_with_env_in;
+    use std::collections::HashMap;
+    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    //
+    macro_rules! color_start {
+        //() => { "\u{1B}[01;31m" }
+        () => {
+            "<S>"
+        };
+    }
+    macro_rules! color_end {
+        //() => {"\u{1B}[0m"}
+        () => {
+            "<E>"
+        };
+    }
+    macro_rules! env_1 {
+        () => {{
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert(
+                "AKI_GSUB_COLOR_SEQ_ST".to_string(),
+                color_start!().to_string(),
+            );
+            env.insert(
+                "AKI_GSUB_COLOR_SEQ_ED".to_string(),
+                color_end!().to_string(),
+            );
+            env
+        }};
+    }
+    //
+    #[test]
+    fn test_multi_line() {
+        let env = env_1!();
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            &["-e", "a", "-f", "1", "--color", "always"],
+            env,
+            b"abcabca\noooooo\nabcabca\n" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(
+            oup.stdout,
+            "<S>1<E>bc<S>1<E>bc<S>1<E>\noooooo\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
+        );
+        assert_eq!(oup.status.success(), true);
+    }
+    //
+    #[test]
+    fn test_multi_line_opt_n() {
+        let env = env_1!();
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            &["-e", "a", "-f", "1", "-n", "--color", "always"],
+            env,
+            b"abcabca\noooooo\nabcabca\n" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(
+            oup.stdout,
+            "<S>1<E>bc<S>1<E>bc<S>1<E>\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
+        );
+        assert_eq!(oup.status.success(), true);
+    }
+}
 
 mod test_3 {
     use crate::helper::exec_target;

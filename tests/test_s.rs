@@ -9,12 +9,22 @@ macro_rules! help_msg {
             "substitude text command, replace via regex.\n",
             "\n",
             "Options:\n",
+            "      --color <when>    use markers to highlight the matching strings\n",
             "  -e, --exp <exp>       regular expression\n",
             "  -f, --format <fmt>    replace format\n",
             "  -n, --quiet           no output unmach lines\n",
             "\n",
             "  -H, --help        display this help and exit\n",
             "  -V, --version     display version information and exit\n",
+            "\n",
+            "Option Parameters:\n",
+            "  <when>    'always', 'never', or 'auto'\n",
+            "  <exp>     regular expression can has capture groups\n",
+            "  <fmt>     format can has capture group: $0, $1, $2, ...\n",
+            "\n",
+            "Environments:\n",
+            "  AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi\n",
+            "  AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi\n",
             "\n",
             "Examples:\n",
             "  Leaving one character between 'a' and 'c', converts 'a' and 'c'\n",
@@ -23,7 +33,7 @@ macro_rules! help_msg {
             "  result output:\n",
             "    *b**b*a\n",
             "\n",
-            "  Converts 'a' to '*' and 'c' to '@'.\n",
+            "  Converts 'a' to '*' and 'c' to '@':\n",
             "    echo \"abcabca\" | aki-gsub -e \"a\" -f \"*\" -e \"c\" -f \"@\"\n",
             "  result output:\n",
             "    *b@*b@*\n",
@@ -73,9 +83,29 @@ macro_rules! do_execute {
         match r {
             Ok(_) => {}
             Err(ref err) => {
-                #[rustfmt::skip]
-                                let _ = sioe.perr().lock()
-                                    .write_fmt(format_args!("{}: {}\n", program, err));
+                let _ = sioe
+                    .perr()
+                    .lock()
+                    .write_fmt(format_args!("{}: {}\n", program, err));
+            }
+        };
+        (r, sioe)
+    }};
+    ($env:expr, $args:expr, $sin:expr) => {{
+        let sioe = RunnelIoe::new(
+            Box::new(StringIn::with_str($sin)),
+            Box::new(StringOut::default()),
+            Box::new(StringErr::default()),
+        );
+        let program = env!("CARGO_PKG_NAME");
+        let r = execute_env(&sioe, &program, $args, $env);
+        match r {
+            Ok(_) => {}
+            Err(ref err) => {
+                let _ = sioe
+                    .perr()
+                    .lock()
+                    .write_fmt(format_args!("{}: {}\n", program, err));
             }
         };
         (r, sioe)
@@ -182,6 +212,86 @@ mod test_s1 {
     }
 }
 
+mod test_s1_color {
+    use libaki_gsub::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    macro_rules! color_start {
+        //() => { "\u{1B}[01;31m" }
+        () => {
+            "<S>"
+        };
+    }
+    macro_rules! color_end {
+        //() => {"\u{1B}[0m"}
+        () => {
+            "<E>"
+        };
+    }
+    macro_rules! env_1 {
+        () => {{
+            let mut env = conf::EnvConf::new();
+            env.color_seq_start = color_start!().to_string();
+            env.color_seq_end = color_end!().to_string();
+            env
+        }};
+    }
+    //
+    #[test]
+    fn test_t1() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(
+            &env,
+            &["-e", "a", "-f", "1", "--color", "always"],
+            "abcabca"
+        );
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<S>1<E>bc<S>1<E>bc<S>1<E>\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    //
+    #[test]
+    fn test_t2() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(
+            &env,
+            &["-e", "a(b)c", "-f", "$1", "--color", "always"],
+            "abcabca"
+        );
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<S>b<E><S>b<E>a\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    //
+    #[test]
+    fn test_t3() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(
+            &env,
+            &["-e", "a(b)c", "-f", "$0", "--color", "always"],
+            "abcabca"
+        );
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<S>abc<E><S>abc<E>a\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    //
+    #[test]
+    fn test_t4() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(
+            &env,
+            &["-e", "a(b)c", "-f", "$2", "--color", "always"],
+            "abcabca"
+        );
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<S><E><S><E>a\n");
+        assert_eq!(r.is_ok(), true);
+    }
+}
+
 mod test_s2 {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
@@ -201,6 +311,66 @@ mod test_s2 {
         let (r, sioe) = do_execute!(&["-e", "a", "-f", "1", "-n"], "abcabca\noooooo\nabcabca\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "1bc1bc1\n1bc1bc1\n");
+        assert_eq!(r.is_ok(), true);
+    }
+}
+
+mod test_s2_color {
+    use libaki_gsub::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    macro_rules! color_start {
+        //() => { "\u{1B}[01;31m" }
+        () => {
+            "<S>"
+        };
+    }
+    macro_rules! color_end {
+        //() => {"\u{1B}[0m"}
+        () => {
+            "<E>"
+        };
+    }
+    macro_rules! env_1 {
+        () => {{
+            let mut env = conf::EnvConf::new();
+            env.color_seq_start = color_start!().to_string();
+            env.color_seq_end = color_end!().to_string();
+            env
+        }};
+    }
+    //
+    #[test]
+    fn test_multi_line() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(
+            &env,
+            &["-e", "a", "-f", "1", "--color", "always"],
+            "abcabca\noooooo\nabcabca\n"
+        );
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(
+            buff!(sioe, sout),
+            "<S>1<E>bc<S>1<E>bc<S>1<E>\noooooo\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
+        );
+        assert_eq!(r.is_ok(), true);
+    }
+    //
+    #[test]
+    fn test_multi_line_opt_n() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(
+            &env,
+            &["-e", "a", "-f", "1", "-n", "--color", "always"],
+            "abcabca\noooooo\nabcabca\n"
+        );
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(
+            buff!(sioe, sout),
+            "<S>1<E>bc<S>1<E>bc<S>1<E>\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
+        );
         assert_eq!(r.is_ok(), true);
     }
 }

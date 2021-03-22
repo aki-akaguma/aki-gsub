@@ -2,6 +2,13 @@ aki-gsub TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.26 (2021-03-22)
+=====
+
+* update depend: regex v1.4.5: fixes stack overflows
+* add --color <when>
+* add some contents to --help
+
 0.1.25 (2021-03-14)
 =====
 
