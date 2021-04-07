@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.26"
+version = "0.1.27"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command, replace via regex.
@@ -28,7 +28,7 @@ default = []
 [dependencies]
 anyhow = "1.0"
 atty = "0.2"
-flood-tide = { version="0.1", default-features=true, features=["stop_at_mm"] }
+flood-tide = { version="0.2", default-features=true, features=["stop_at_mm"] }
 regex = "1.4"
 runnel = "0.3"
 
