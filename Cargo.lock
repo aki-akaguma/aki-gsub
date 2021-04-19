@@ -11,7 +11,7 @@ dependencies = [
 
 [[package]]
 name = "aki-gsub"
-version = "0.1.27"
+version = "0.1.28"
 dependencies = [
  "anyhow",
  "atty",
@@ -52,9 +52,9 @@ checksum = "5c5a6ce2d4a1a36aff00d09c00a913bb5857429c8c9d9d0efb08d9f5bf01e908"
 
 [[package]]
 name = "flood-tide-gen"
-version = "0.1.8"
+version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f1d4fb0bd05af971aa77546b4ecf8cf9c8e790f051938e16c42a8747873af88"
+checksum = "469e18a69e9e1114705aae74ba817afaa445c2f57a54985e3b6f61865c91f179"
 dependencies = [
  "anyhow",
  "case",
