@@ -2,6 +2,12 @@ aki-gsub TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.29 (2021-04-23)
+=====
+
+* update depends: flood-tide-gen(0.1.12), flood-tide(0.2.1)
+* update depends: bug fix: regex(1.4.6)
+
 0.1.28 (2021-04-19)
 =====
 

@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.28"
+version = "0.1.29"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command, replace via regex.
@@ -35,6 +35,7 @@ runnel = "0.3"
 [dev-dependencies]
 
 [build-dependencies]
+rust-version-info-file = "0.1"
 rustc_version = "0.3"
 
 [workspace]
@@ -51,6 +52,9 @@ extended-description = """\
 This program is substitude text command, replace via regex.
 """
 depends = "$auto"
+separate-debug-symbols = true
 assets = [
     ["target/release/aki-gsub", "usr/bin/aki-gsub", "755"],
+    ["target/rust-version-info.txt", "usr/share/doc/aki-gsub/", "644"],
+    ["README.md", "usr/share/doc/aki-gsub/", "644"],
 ]
