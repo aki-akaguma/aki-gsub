@@ -6,6 +6,7 @@ Unreleased changes. Release notes have not yet been written.
 =====
 
 * update depends: flood-tide-gen(0.1.12), flood-tide(0.2.1)
+* add command option: -X
 * update depends: bug fix: regex(1.4.6)
 
 0.1.28 (2021-04-19)
