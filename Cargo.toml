@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.29"
+version = "0.1.30"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command, replace via regex.
@@ -24,12 +24,13 @@ path = "src/main.rs"
 
 [features]
 default = []
+debian_build = []
 
 [dependencies]
 anyhow = "1.0"
 atty = "0.2"
 flood-tide = { version="0.2", default-features=true, features=["stop_at_mm"] }
-regex = "1.4"
+regex = "1.5"
 runnel = "0.3"
 
 [dev-dependencies]
@@ -44,7 +45,7 @@ members = [
 ]
 
 [package.metadata.deb]
-features = []
+features = ["debian_build"]
 section = "AAA-text"
 priority = "optional"
 maintainer = "aki <aki.akaguma@hotmail.com>"
