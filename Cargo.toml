@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.31"
+version = "0.1.32"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command, replace via regex.
@@ -35,6 +35,8 @@ runnel = "0.3"
 memx-cdy = "0.1"
 
 [dev-dependencies]
+indoc = "1.0"
+exec-target = "0.2"
 
 [build-dependencies]
 rust-version-info-file = "0.1"

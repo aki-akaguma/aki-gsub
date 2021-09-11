@@ -93,11 +93,7 @@ fn do_match_proc(
 ) -> anyhow::Result<()> {
     let color_start_s = env.color_seq_start.as_str();
     let color_end_s = env.color_seq_end.as_str();
-    let color_is_alyways = if let OptColorWhen::Always = conf.opt_color {
-        true
-    } else {
-        false
-    };
+    let color_is_alyways = crate::my_matches!(conf.opt_color, OptColorWhen::Always);
     //
     for line in sioe.pin().lock().lines() {
         let line_s = line?;

@@ -1,45 +1,49 @@
-const TARGET_EXE_PATH: &'static str = env!("CARGO_BIN_EXE_aki-gsub");
+const TARGET_EXE_PATH: &'static str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
 
 macro_rules! help_msg {
     () => {
         concat!(
             version_msg!(),
             "\n",
-            "Usage:\n",
-            "  aki-gsub [options]\n",
-            "\n",
-            "substitude text command, replace via regex.\n",
-            "\n",
-            "Options:\n",
-            "      --color <when>    use markers to highlight the matching strings\n",
-            "  -e, --exp <exp>       regular expression\n",
-            "  -f, --format <fmt>    replace format\n",
-            "  -n, --quiet           no output unmach lines\n",
-            "\n",
-            "  -H, --help        display this help and exit\n",
-            "  -V, --version     display version information and exit\n",
-            "  -X <x-options>    x options. try -X help\n",
-            "\n",
-            "Option Parameters:\n",
-            "  <when>    'always', 'never', or 'auto'\n",
-            "  <exp>     regular expression can has capture groups\n",
-            "  <fmt>     format can has capture group: $0, $1, $2, ...\n",
-            "\n",
-            "Environments:\n",
-            "  AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi\n",
-            "  AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi\n",
-            "\n",
-            "Examples:\n",
-            "  Leaving one character between 'a' and 'c', converts 'a' and 'c'\n",
-            "  on both sides to '*':\n",
-            "    echo \"abcabca\" | aki-gsub -e \"a(.)c\" -f \"*\\$1*\"\n",
-            "  result output:\n",
-            "    *b**b*a\n",
-            "\n",
-            "  Converts 'a' to '*' and 'c' to '@':\n",
-            "    echo \"abcabca\" | aki-gsub -e \"a\" -f \"*\" -e \"c\" -f \"@\"\n",
-            "  result output:\n",
-            "    *b@*b@*\n",
+            indoc::indoc!(
+                r#"
+            Usage:
+              aki-gsub [options]
+
+            substitude text command, replace via regex.
+
+            Options:
+                  --color <when>    use markers to highlight the matching strings
+              -e, --exp <exp>       regular expression
+              -f, --format <fmt>    replace format
+              -n, --quiet           no output unmach lines
+
+              -H, --help        display this help and exit
+              -V, --version     display version information and exit
+              -X <x-options>    x options. try -X help
+
+            Option Parameters:
+              <when>    'always', 'never', or 'auto'
+              <exp>     regular expression can has capture groups
+              <fmt>     format can has capture group: $0, $1, $2, ...
+
+            Environments:
+              AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi
+              AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi
+
+            Examples:
+              Leaving one character between 'a' and 'c', converts 'a' and 'c'
+              on both sides to '*':
+                echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+              result output:
+                *b**b*a
+
+              Converts 'a' to '*' and 'c' to '@':
+                echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
+              result output:
+                *b@*b@*
+            "#
+            ),
             "\n",
         )
     };
@@ -69,10 +73,8 @@ macro_rules! fixture_text10k {
     };
 }
 
-mod helper;
-
 mod test_0 {
-    use crate::helper::exec_target;
+    use exec_target::exec_target;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
@@ -123,7 +125,7 @@ mod test_0 {
 } // mod test_0
 
 mod test_1 {
-    use crate::helper::exec_target_with_in;
+    use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -176,7 +178,7 @@ mod test_1 {
 }
 
 mod test_1_color {
-    use crate::helper::exec_target_with_env_in;
+    use exec_target::exec_target_with_env_in;
     use std::collections::HashMap;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
@@ -265,7 +267,7 @@ mod test_1_color {
 }
 
 mod test_2 {
-    use crate::helper::exec_target_with_in;
+    use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -294,7 +296,7 @@ mod test_2 {
 }
 
 mod test_2_color {
-    use crate::helper::exec_target_with_env_in;
+    use exec_target::exec_target_with_env_in;
     use std::collections::HashMap;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
@@ -361,7 +363,7 @@ mod test_2_color {
 }
 
 mod test_3 {
-    use crate::helper::exec_target;
+    use exec_target::exec_target;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -379,7 +381,7 @@ mod test_3 {
 }
 
 mod test_4 {
-    use crate::helper::exec_target_with_in;
+    use exec_target::exec_target_with_in;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
 
