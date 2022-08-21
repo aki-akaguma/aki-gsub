@@ -11,7 +11,7 @@ const OPTIONS_TEXT: &str = r"Options:
 ";
 
 #[repr(u8)]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 enum CmdOp {
     Color,
     Exp,
@@ -48,7 +48,7 @@ const OPT_ARY: [Opt;7] = [
 const OPT_ARY_SHO_IDX: [(u8,usize);6] = [
 (b'H',4),(b'V',6),(b'X',0),(b'e',2),(b'f',3),(b'n',5),];
 
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub struct CmdOptConf {
     pub prog_name: String,
     //

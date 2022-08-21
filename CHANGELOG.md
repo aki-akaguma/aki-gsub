@@ -2,6 +2,11 @@ TBD: aki-gsub
 ===
 Unreleased changes. Release notes have not yet been written.
 
+* fix clippy: you are deriving `PartialEq` and can implement `Eq`
+* update depends: flood-tide-gen(0.1.17)
+* update depends: anyhow(1.0.62), libc(0.2.132), regex(1.6.0)
+* update depends: semver(1.0.13)
+
 0.1.35 (2022-06-18)
 =====
 
