@@ -62,7 +62,7 @@ fn format(line_offset: usize, caps: &Captures<'_>, fmt: &str) -> ReplacedOut {
         }
         //
         let b: u8 = fmt.as_bytes()[cur];
-        if (b'0'..=b'9').contains(&b) {
+        if b.is_ascii_digit() {
             let i: usize = (b - b'0') as usize;
             if let Some(mat) = caps.get(i) {
                 v_out_s.push_str(mat.as_str());
@@ -150,10 +150,10 @@ fn do_match_proc(
             }
             //
             #[rustfmt::skip]
-            sioe.pout().lock().write_fmt(format_args!("{}\n", out_s))?;
+            sioe.pout().lock().write_fmt(format_args!("{out_s}\n"))?;
         } else if !conf.flg_quiet {
             #[rustfmt::skip]
-            sioe.pout().lock().write_fmt(format_args!("{}\n", line_ss))?;
+            sioe.pout().lock().write_fmt(format_args!("{line_ss}\n"))?;
         }
     }
     //

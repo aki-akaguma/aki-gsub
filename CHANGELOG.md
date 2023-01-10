@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * clippy: you are deriving `PartialEq` and can implement `Eq`
+* clippy: uninlined_format_args, manual_is_ascii_check
 
 
 ## [0.1.35] (2022-06-18)
