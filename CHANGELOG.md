@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
-## [0.1.36] (2023-01-11)
+## [0.1.37] (2023-01-11)
+### Fixed
+* http links on `CHANGELOG.md`
+
+## [0.1.36] (2023-01-11) YANKED
 ### Added
 * badges into `README.tpl`
 * rust-version = "1.56.0" into Cargo.toml
@@ -261,7 +265,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 0.1.0 (2017-12-12)
 * first commit
 
-[Unreleased]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.35..HEAD
+[Unreleased]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.37..HEAD
+[0.1.37]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.35..v0.1.37
+[0.1.36]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.35..v0.1.36
 [0.1.35]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.34..v0.1.35
 [0.1.34]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.33..v0.1.34
 [0.1.33]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.32..v0.1.33
