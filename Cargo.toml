@@ -1,6 +1,6 @@
 [package]
 name = "aki-gsub"
-version = "0.1.35"
+version = "0.1.36"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 substitude text command, replace via regex.
@@ -11,6 +11,7 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 build = "build.rs"
 edition = "2021"
+rust-version = "1.56.0"
 repository = "https://github.com/aki-akaguma/aki-gsub"
 
 [lib]
