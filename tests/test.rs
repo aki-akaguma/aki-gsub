@@ -1,4 +1,4 @@
-const TARGET_EXE_PATH: &'static str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
+const TARGET_EXE_PATH: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
 
 macro_rules! help_msg {
     () => {
@@ -76,39 +76,39 @@ macro_rules! fixture_text10k {
 mod test_0 {
     use exec_target::exec_target;
     //use exec_target::args_from;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_help() {
-        let oup = exec_target(TARGET_EXE_PATH, &["-H"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-H"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, help_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_help_long() {
-        let oup = exec_target(TARGET_EXE_PATH, &["--help"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--help"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, help_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_version() {
-        let oup = exec_target(TARGET_EXE_PATH, &["-V"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-V"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, version_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_version_long() {
-        let oup = exec_target(TARGET_EXE_PATH, &["--version"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--version"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, version_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_non_option() {
-        let oup = exec_target(TARGET_EXE_PATH, &[""]);
+        let oup = exec_target(TARGET_EXE_PATH, [""]);
         assert_eq!(
             oup.stderr,
             concat!(
@@ -120,67 +120,63 @@ mod test_0 {
             )
         );
         assert_eq!(oup.stdout, "");
-        assert_eq!(oup.status.success(), false);
+        assert!(!oup.status.success());
     }
 } // mod test_0
 
 mod test_1 {
     use exec_target::exec_target_with_in;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_t1() {
-        let oup = exec_target_with_in(
-            TARGET_EXE_PATH,
-            &["-e", "a", "-f", "1"],
-            b"abcabca" as &[u8],
-        );
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "1"], b"abcabca" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "1bc1bc1\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
     fn test_t2() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["-e", "a(b)c", "-f", "$1"],
+            ["-e", "a(b)c", "-f", "$1"],
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "bba\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
     fn test_t3() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["-e", "a(b)c", "-f", "$0"],
+            ["-e", "a(b)c", "-f", "$0"],
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abcabca\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
     fn test_t4() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["-e", "a(b)c", "-f", "$2"],
+            ["-e", "a(b)c", "-f", "$2"],
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "a\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }
 
 mod test_1_color {
     use exec_target::exec_target_with_env_in;
     use std::collections::HashMap;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     macro_rules! color_start {
         //() => { "\u{1B}[01;31m" }
@@ -214,13 +210,13 @@ mod test_1_color {
         let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            &["-e", "a", "-f", "1", "--color", "always"],
+            ["-e", "a", "-f", "1", "--color", "always"],
             env,
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S>1<E>bc<S>1<E>bc<S>1<E>\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
@@ -228,13 +224,13 @@ mod test_1_color {
         let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            &["-e", "a(b)c", "-f", "$1", "--color", "always"],
+            ["-e", "a(b)c", "-f", "$1", "--color", "always"],
             env,
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S>b<E><S>b<E>a\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
@@ -242,13 +238,13 @@ mod test_1_color {
         let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            &["-e", "a(b)c", "-f", "$0", "--color", "always"],
+            ["-e", "a(b)c", "-f", "$0", "--color", "always"],
             env,
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S>abc<E><S>abc<E>a\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
@@ -256,49 +252,49 @@ mod test_1_color {
         let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            &["-e", "a(b)c", "-f", "$2", "--color", "always"],
+            ["-e", "a(b)c", "-f", "$2", "--color", "always"],
             env,
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S><E><S><E>a\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }
 
 mod test_2 {
     use exec_target::exec_target_with_in;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_multi_line() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["-e", "a", "-f", "1"],
+            ["-e", "a", "-f", "1"],
             b"abcabca\noooooo\nabcabca\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "1bc1bc1\noooooo\n1bc1bc1\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
     fn test_multi_line_opt_n() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["-e", "a", "-f", "1", "-n"],
+            ["-e", "a", "-f", "1", "-n"],
             b"abcabca\noooooo\nabcabca\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "1bc1bc1\n1bc1bc1\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }
 
 mod test_2_color {
     use exec_target::exec_target_with_env_in;
     use std::collections::HashMap;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     macro_rules! color_start {
         //() => { "\u{1B}[01;31m" }
@@ -332,7 +328,7 @@ mod test_2_color {
         let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            &["-e", "a", "-f", "1", "--color", "always"],
+            ["-e", "a", "-f", "1", "--color", "always"],
             env,
             b"abcabca\noooooo\nabcabca\n" as &[u8],
         );
@@ -341,7 +337,7 @@ mod test_2_color {
             oup.stdout,
             "<S>1<E>bc<S>1<E>bc<S>1<E>\noooooo\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
         );
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
@@ -349,7 +345,7 @@ mod test_2_color {
         let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            &["-e", "a", "-f", "1", "-n", "--color", "always"],
+            ["-e", "a", "-f", "1", "-n", "--color", "always"],
             env,
             b"abcabca\noooooo\nabcabca\n" as &[u8],
         );
@@ -358,13 +354,13 @@ mod test_2_color {
             oup.stdout,
             "<S>1<E>bc<S>1<E>bc<S>1<E>\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
         );
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }
 
 mod test_3 {
     use exec_target::exec_target;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_output_broken_pipe() {
@@ -373,17 +369,17 @@ mod test_3 {
             fixture_text10k!(),
             TARGET_EXE_PATH
         );
-        let oup = exec_target("sh", &["-c", &cmdstr]);
+        let oup = exec_target("sh", ["-c", &cmdstr]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "aBCDEFG\nHIJKLMN\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }
 
 mod test_4 {
     use exec_target::exec_target_with_in;
     //use exec_target::args_from;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
 
     //
     // [BUG] thread 'main' panicked at 'begin <= end (4 <= 2) when slicing `$2 :: $0`', /checkout/src/libcore/str/mod.rs:2221:4
@@ -392,7 +388,7 @@ mod test_4 {
     #[test]
     fn test_fix_bug_1() {
         let oup = exec_target_with_in(TARGET_EXE_PATH,
-            &[
+            [
                 "-e",
                 "(.*\\.){0,1}([A-Za-z0-9][A-Za-z0-9\\-]{1,61}(\\.[A-Za-z0-9]{2,}){0,1}(\\.[A-Za-z]{2,}){0,1}\\.[A-Za-z]{2,5})$",
                 "-f",
@@ -404,18 +400,18 @@ mod test_4 {
             oup.stdout,
             "blizoo.bg :: 001cea1eef55.softphone.blizoo.bg\n"
         );
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     //
     #[test]
     fn test_fix_bug_2() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["-e", "ICON=\"[^\"]*\"", "-f", ""],
+            ["-e", "ICON=\"[^\"]*\"", "-f", ""],
             b"abc ICON=\"ABCDEFG\" defg\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abc  defg\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }

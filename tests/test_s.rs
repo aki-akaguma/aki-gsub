@@ -80,7 +80,9 @@ macro_rules! do_execute {
     ($args:expr, $sin:expr) => {{
         let sioe = RunnelIoe::new(
             Box::new(StringIn::with_str($sin)),
+            #[allow(clippy::box_default)]
             Box::new(StringOut::default()),
+            #[allow(clippy::box_default)]
             Box::new(StringErr::default()),
         );
         let program = env!("CARGO_PKG_NAME");
@@ -99,7 +101,9 @@ macro_rules! do_execute {
     ($env:expr, $args:expr, $sin:expr) => {{
         let sioe = RunnelIoe::new(
             Box::new(StringIn::with_str($sin)),
+            #[allow(clippy::box_default)]
             Box::new(StringOut::default()),
+            #[allow(clippy::box_default)]
             Box::new(StringErr::default()),
         );
         let program = env!("CARGO_PKG_NAME");
@@ -137,28 +141,28 @@ mod test_s0 {
         let (r, sioe) = do_execute!(&["-H"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_help_long() {
         let (r, sioe) = do_execute!(&["--help"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_version() {
         let (r, sioe) = do_execute!(&["-V"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_version_long() {
         let (r, sioe) = do_execute!(&["--version"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_non_option() {
@@ -174,7 +178,7 @@ mod test_s0 {
             )
         );
         assert_eq!(buff!(sioe, sout), "");
-        assert_eq!(r.is_ok(), false);
+        assert!(r.is_err());
     }
 }
 
@@ -189,7 +193,7 @@ mod test_s1 {
         let (r, sioe) = do_execute!(&["-e", "a", "-f", "1"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "1bc1bc1\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -197,7 +201,7 @@ mod test_s1 {
         let (r, sioe) = do_execute!(&["-e", "a(b)c", "-f", "$1"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "bba\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -205,7 +209,7 @@ mod test_s1 {
         let (r, sioe) = do_execute!(&["-e", "a(b)c", "-f", "$0"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "abcabca\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -213,7 +217,7 @@ mod test_s1 {
         let (r, sioe) = do_execute!(&["-e", "a(b)c", "-f", "$2"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "a\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
 
@@ -254,7 +258,7 @@ mod test_s1_color {
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<S>1<E>bc<S>1<E>bc<S>1<E>\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -267,7 +271,7 @@ mod test_s1_color {
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<S>b<E><S>b<E>a\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -280,7 +284,7 @@ mod test_s1_color {
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<S>abc<E><S>abc<E>a\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -293,7 +297,7 @@ mod test_s1_color {
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<S><E><S><E>a\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
 
@@ -308,7 +312,7 @@ mod test_s2 {
         let (r, sioe) = do_execute!(&["-e", "a", "-f", "1"], "abcabca\noooooo\nabcabca\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "1bc1bc1\noooooo\n1bc1bc1\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -316,7 +320,7 @@ mod test_s2 {
         let (r, sioe) = do_execute!(&["-e", "a", "-f", "1", "-n"], "abcabca\noooooo\nabcabca\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "1bc1bc1\n1bc1bc1\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
 
@@ -360,7 +364,7 @@ mod test_s2_color {
             buff!(sioe, sout),
             "<S>1<E>bc<S>1<E>bc<S>1<E>\noooooo\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
         );
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -376,7 +380,7 @@ mod test_s2_color {
             buff!(sioe, sout),
             "<S>1<E>bc<S>1<E>bc<S>1<E>\n<S>1<E>bc<S>1<E>bc<S>1<E>\n"
         );
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
 
@@ -418,7 +422,7 @@ mod test_s4 {
             buff!(sioe, sout),
             "blizoo.bg :: 001cea1eef55.softphone.blizoo.bg\n"
         );
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     //
     #[test]
@@ -429,6 +433,6 @@ mod test_s4 {
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "abc  defg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
