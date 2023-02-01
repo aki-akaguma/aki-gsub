@@ -4,6 +4,9 @@
 [![Docs][docs-image]][docs-link]
 ![Rust Version][rustc-image]
 ![Apache2/MIT licensed][license-image]
+[![Test ubu][test-ubuntu-image]][test-ubuntu-link]
+[![Test mac][test-windows-image]][test-windows-link]
+[![Test win][test-macos-image]][test-macos-link]
 
 the substitude text program.
 
@@ -152,5 +155,11 @@ at your option.
 [crate-link]: https://crates.io/crates/aki-gsub
 [docs-image]: https://docs.rs/aki-gsub/badge.svg
 [docs-link]: https://docs.rs/aki-gsub/
-[rustc-image]: https://img.shields.io/badge/rustc-1.56+-blue.svg
+[rustc-image]: https://img.shields.io/badge/rustc-1.58+-blue.svg
 [license-image]: https://img.shields.io/badge/license-Apache2.0/MIT-blue.svg
+[test-ubuntu-image]: https://github.com/aki-akaguma/aki-gsub/actions/workflows/test-ubuntu.yml/badge.svg
+[test-ubuntu-link]: https://github.com/aki-akaguma/aki-gsub/actions/workflows/test-ubuntu.yml
+[test-macos-image]: https://github.com/aki-akaguma/aki-gsub/actions/workflows/test-macos.yml/badge.svg
+[test-macos-link]: https://github.com/aki-akaguma/aki-gsub/actions/workflows/test-macos.yml
+[test-windows-image]: https://github.com/aki-akaguma/aki-gsub/actions/workflows/test-windows.yml/badge.svg
+[test-windows-link]: https://github.com/aki-akaguma/aki-gsub/actions/workflows/test-windows.yml
