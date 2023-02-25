@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `COPYING`
 
 ### Fixed
+* bug: `test_x_option_rvi()`
 * `LICENSE-APACHE`, `LICENSE-MIT`
 * license files
 * clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`

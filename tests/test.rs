@@ -68,21 +68,21 @@ macro_rules! x_rvi_msg {
     () => {
         indoc::indoc!(
             r#"
-        rustc \d+.\d+.\d+ \(.* \d+-\d+-\d+\)
-        aki-gsub v\d+.\d+.\d+
+        rustc \d+\.\d+\.\d+(-(beta\.\d+|nightly))? \(.* \d+-\d+-\d+\)
+        aki-gsub v\d+\.\d+\.\d+
         (.|\n)*
-        ├── regex v\d+.\d+.\d+
+        ├── regex v\d+\.\d+\.\d+
         (.|\n)*
-        └── runnel v\d+.\d+.\d+
+        └── runnel v\d+\.\d+\.\d+
         (.|\n)*
         \[build-dependencies\]
-        ├── rust-version-info-file v\d+.\d+.\d+
-        └── rustc_version v\d+.\d+.\d+ \(\*\)
+        ├── rust-version-info-file v\d+\.\d+\.\d+
+        └── rustc_version v\d+\.\d+\.\d+ \(\*\)
         \[dev-dependencies\]
-        ├── assert-text v\d+.\d+.\d+
+        ├── assert-text v\d+\.\d+\.\d+
         (.|\n)*
-        ├── exec-target v\d+.\d+.\d+
-        └── indoc v\d+.\d+.\d+ \(proc-macro\)
+        ├── exec-target v\d+\.\d+\.\d+
+        └── indoc v\d+\.\d+\.\d+ \(proc-macro\)
         
         "#
         )
