@@ -47,6 +47,46 @@ macro_rules! help_msg {
     };
 }
 
+macro_rules! x_help_msg {
+    () => {
+        concat!(
+            indoc::indoc!(
+                r#"
+            Options:
+              -X rust-version-info     display rust version info and exit
+              -X base_dir=<path>       set <path> is base directory
+            "#
+            ),
+            "\n",
+        )
+    };
+}
+
+macro_rules! x_rvi_msg {
+    () => {
+        indoc::indoc!(
+            r#"
+        rustc \d+.\d+.\d+ \(.* \d+-\d+-\d+\)
+        aki-gsub v\d+.\d+.\d+
+        (.|\n)*
+        ├── regex v\d+.\d+.\d+
+        (.|\n)*
+        └── runnel v\d+.\d+.\d+
+        (.|\n)*
+        \[build-dependencies\]
+        ├── rust-version-info-file v\d+.\d+.\d+
+        └── rustc_version v\d+.\d+.\d+ \(\*\)
+        \[dev-dependencies\]
+        ├── assert-text v\d+.\d+.\d+
+        (.|\n)*
+        ├── exec-target v\d+.\d+.\d+
+        └── indoc v\d+.\d+.\d+ \(proc-macro\)
+        
+        "#
+        )
+    };
+}
+
 macro_rules! try_help_msg {
     () => {
         "Try --help for help.\n"
@@ -179,6 +219,39 @@ mod test_s0 {
         );
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_err());
+    }
+    #[test]
+    fn test_x_option() {
+        let (r, sioe) = do_execute!(&["-X"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option argument: X\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    #[test]
+    fn test_x_option_help() {
+        let (r, sioe) = do_execute!(&["-X", "help"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), x_help_msg!());
+        assert!(r.is_ok());
+    }
+    #[test]
+    fn test_x_option_rvi() {
+        use assert_text::assert_text_match;
+        //
+        let (r, sioe) = do_execute!(&["-X", "rust-version-info"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert_text_match!(buff!(sioe, sout), x_rvi_msg!());
+        assert!(r.is_ok());
     }
 }
 

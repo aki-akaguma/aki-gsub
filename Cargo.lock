@@ -16,6 +16,7 @@ name = "aki-gsub"
 version = "0.1.37"
 dependencies = [
  "anyhow",
+ "assert-text",
  "atty",
  "exec-target",
  "flood-tide",
@@ -32,6 +33,16 @@ name = "anyhow"
 version = "1.0.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2cb2f989d18dd141ab8ae82f64d1a8cdd37e0840f73a406896cf5e99502fab61"
+
+[[package]]
+name = "assert-text"
+version = "0.2.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a868351cf92d0b74d42ee998ceebf4c0a376d70c9da954d52d7be20dc4aa5604"
+dependencies = [
+ "difference",
+ "regex",
+]
 
 [[package]]
 name = "atty"
@@ -58,6 +69,12 @@ checksum = "28d997bd5e24a5928dd43e46dc529867e207907fe0b239c3477d924f7f2ca320"
 dependencies = [
  "libc",
 ]
+
+[[package]]
+name = "difference"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
 
 [[package]]
 name = "exec-target"

@@ -36,11 +36,11 @@ impl ::std::str::FromStr for OptUcXParam {
 
 impl ::std::fmt::Display for OptUcXParam {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        let s = match *self {
-            OptUcXParam::Void => "void",
-            OptUcXParam::Help => "help",
-            OptUcXParam::RustVersionInfo => "rust-version-info",
-            OptUcXParam::BaseDir(_) => "base_dir=",
+        let s = match &*self {
+            OptUcXParam::Void => "void".into(),
+            OptUcXParam::Help => "help".into(),
+            OptUcXParam::RustVersionInfo => "rust-version-info".into(),
+            OptUcXParam::BaseDir(p) => format!("base_dir=\"{p}\""),
         };
         write!(f, "{s}")
     }
@@ -72,76 +72,79 @@ impl ::std::error::Error for OptUcXParamParseError {
 }
 //}}} OptUcXParamParseError
 
-/*
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
-
     use super::*;
 
     #[test]
-    fn test_display_empty() {
-        let col = OptSortOrder::Empty;
-        assert_eq!(format!("{}", col), "empty");
+    fn test_ucx_default() {
+        let ucx = OptUcXParam::default();
+        assert_eq!(format!("{}", ucx), "void");
     }
     #[test]
-    fn test_display_swap() {
-        let col = OptSortOrder::Swap;
-        assert_eq!(format!("{}", col), "swap");
+    fn test_ucx_void() {
+        let ucx = OptUcXParam::Void;
+        assert_eq!(format!("{}", ucx), "void");
     }
     #[test]
-    fn test_display_rss() {
-        let col = OptSortOrder::Rss;
-        assert_eq!(format!("{}", col), "rss");
+    fn test_ucx_help() {
+        let ucx = OptUcXParam::Help;
+        assert_eq!(format!("{}", ucx), "help");
     }
     #[test]
-    fn test_display_total() {
-        let col = OptSortOrder::Total;
-        assert_eq!(format!("{}", col), "total");
+    fn test_ucx_rvi() {
+        let ucx = OptUcXParam::RustVersionInfo;
+        assert_eq!(format!("{}", ucx), "rust-version-info");
     }
     #[test]
-    fn test_from_str_empty() {
-        let col: OptSortOrder = match FromStr::from_str("empty") {
+    fn test_ucx_base_dir() {
+        let ucx = OptUcXParam::BaseDir("abc/defg".to_string());
+        assert_eq!(format!("{}", ucx), "base_dir=\"abc/defg\"");
+    }
+    #[test]
+    fn test_from_str_void() {
+        let ucx: OptUcXParam = match FromStr::from_str("void") {
             Ok(c) => c,
             Err(_) => {
                 unreachable!();
             }
         };
-        assert_eq!(col, OptSortOrder::Empty);
+        assert_eq!(ucx, OptUcXParam::Void);
     }
     #[test]
-    fn test_from_str_swap() {
-        let col: OptSortOrder = match FromStr::from_str("swap") {
+    fn test_from_str_help() {
+        let ucx: OptUcXParam = match FromStr::from_str("help") {
             Ok(c) => c,
             Err(_) => {
                 unreachable!();
             }
         };
-        assert_eq!(col, OptSortOrder::Swap);
+        assert_eq!(ucx, OptUcXParam::Help);
     }
     #[test]
-    fn test_from_str_rss() {
-        let col: OptSortOrder = match FromStr::from_str("rss") {
+    fn test_from_str_rvi() {
+        let ucx: OptUcXParam = match FromStr::from_str("rust-version-info") {
             Ok(c) => c,
             Err(_) => {
                 unreachable!();
             }
         };
-        assert_eq!(col, OptSortOrder::Rss);
+        assert_eq!(ucx, OptUcXParam::RustVersionInfo);
     }
     #[test]
-    fn test_from_str_total() {
-        let col: OptSortOrder = match FromStr::from_str("total") {
+    fn test_from_str_base_dir() {
+        let ucx: OptUcXParam = match FromStr::from_str("base_dir=abc/defg") {
             Ok(c) => c,
             Err(_) => {
                 unreachable!();
             }
         };
-        assert_eq!(col, OptSortOrder::Total);
+        assert_eq!(ucx, OptUcXParam::BaseDir("abc/defg".to_string()));
     }
     #[test]
     fn test_from_str_invalid() {
-        let _col: OptSortOrder = match FromStr::from_str("other") {
+        let _ucx: OptUcXParam = match FromStr::from_str("other") {
             Ok(_c) => _c,
             Err(e) => {
                 assert_eq!(e.to_string(), "can not parse \'other\'");
@@ -151,4 +154,3 @@ mod tests {
         unreachable!();
     }
 }
-*/

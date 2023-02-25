@@ -37,6 +37,7 @@ memx-cdy = "0.1"
 
 [dev-dependencies]
 indoc = "1.0"
+assert-text = "0.2"
 exec-target = "0.2"
 
 [build-dependencies]

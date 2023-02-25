@@ -49,6 +49,46 @@ macro_rules! help_msg {
     };
 }
 
+macro_rules! x_help_msg {
+    () => {
+        concat!(
+            indoc::indoc!(
+                r#"
+            Options:
+              -X rust-version-info     display rust version info and exit
+              -X base_dir=<path>       set <path> is base directory
+            "#
+            ),
+            "\n",
+        )
+    };
+}
+
+macro_rules! x_rvi_msg {
+    () => {
+        indoc::indoc!(
+            r#"
+        rustc \d+.\d+.\d+ \(.* \d+-\d+-\d+\)
+        aki-gsub v\d+.\d+.\d+
+        (.|\n)*
+        ├── regex v\d+.\d+.\d+
+        (.|\n)*
+        └── runnel v\d+.\d+.\d+
+        (.|\n)*
+        \[build-dependencies\]
+        ├── rust-version-info-file v\d+.\d+.\d+
+        └── rustc_version v\d+.\d+.\d+ \(\*\)
+        \[dev-dependencies\]
+        ├── assert-text v\d+.\d+.\d+
+        (.|\n)*
+        ├── exec-target v\d+.\d+.\d+
+        └── indoc v\d+.\d+.\d+ \(proc-macro\)
+        
+        "#
+        )
+    };
+}
+
 macro_rules! try_help_msg {
     () => {
         "Try --help for help.\n"
@@ -121,6 +161,38 @@ mod test_0 {
         );
         assert_eq!(oup.stdout, "");
         assert!(!oup.status.success());
+    }
+    #[test]
+    fn test_x_option() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-X"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option argument: X\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    #[test]
+    fn test_x_option_help() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help"]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, x_help_msg!());
+        assert!(oup.status.success());
+    }
+    #[test]
+    fn test_x_option_rvi() {
+        use assert_text::assert_text_match;
+        //
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "rust-version-info"]);
+        assert_eq!(oup.stderr, "");
+        assert_text_match!(&oup.stdout, x_rvi_msg!());
+        assert!(oup.status.success());
     }
 } // mod test_0
 
