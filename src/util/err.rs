@@ -35,3 +35,25 @@ impl<T> BrokenPipeError for anyhow::Result<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    //
+    fn func_bail_broken_pipe() -> anyhow::Result<()> {
+        let io_error = std::io::Error::from(std::io::ErrorKind::BrokenPipe);
+        bail!(io_error);
+    }
+    fn func_bail_unexpected_eof() -> anyhow::Result<()> {
+        let io_error = std::io::Error::from(std::io::ErrorKind::UnexpectedEof);
+        bail!(io_error);
+    }
+    //
+    #[test]
+    fn test_anyhow_is_broken_pipe() {
+        let err = func_bail_broken_pipe();
+        assert!(err.is_broken_pipe());
+        let err = func_bail_unexpected_eof();
+        assert!(!err.is_broken_pipe());
+    }
+}

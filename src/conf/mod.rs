@@ -82,3 +82,21 @@ impl std::default::Default for EnvConf {
         EnvConf::new()
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    //
+    #[test]
+    fn test_cmpoptconf_default() {
+        let conf = CmdOptConf::default();
+        assert!(!conf.is_opt_uc_x_help());
+        assert!(!conf.is_opt_uc_x_package_version_info());
+    }
+    #[test]
+    fn test_envconf_default() {
+        let env = EnvConf::default();
+        assert_eq!(env.color_seq_start, COLOR_START);
+        assert_eq!(env.color_seq_end, COLOR_END);
+    }
+}

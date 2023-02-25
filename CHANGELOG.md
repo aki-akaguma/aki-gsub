@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * miri supports on tests
 * `tarpaulin` supports into `Makefile`
 * `X` option test to tests
+* some tests
 
 ### Changed
 * refactored `Makefile`
