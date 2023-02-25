@@ -36,7 +36,7 @@ impl ::std::str::FromStr for OptUcXParam {
 
 impl ::std::fmt::Display for OptUcXParam {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        let s = match &*self {
+        let s = match self {
             OptUcXParam::Void => "void".into(),
             OptUcXParam::Help => "help".into(),
             OptUcXParam::RustVersionInfo => "rust-version-info".into(),
@@ -80,27 +80,27 @@ mod tests {
     #[test]
     fn test_ucx_default() {
         let ucx = OptUcXParam::default();
-        assert_eq!(format!("{}", ucx), "void");
+        assert_eq!(format!("{ucx}"), "void");
     }
     #[test]
     fn test_ucx_void() {
         let ucx = OptUcXParam::Void;
-        assert_eq!(format!("{}", ucx), "void");
+        assert_eq!(format!("{ucx}"), "void");
     }
     #[test]
     fn test_ucx_help() {
         let ucx = OptUcXParam::Help;
-        assert_eq!(format!("{}", ucx), "help");
+        assert_eq!(format!("{ucx}"), "help");
     }
     #[test]
     fn test_ucx_rvi() {
         let ucx = OptUcXParam::RustVersionInfo;
-        assert_eq!(format!("{}", ucx), "rust-version-info");
+        assert_eq!(format!("{ucx}"), "rust-version-info");
     }
     #[test]
     fn test_ucx_base_dir() {
         let ucx = OptUcXParam::BaseDir("abc/defg".to_string());
-        assert_eq!(format!("{}", ucx), "base_dir=\"abc/defg\"");
+        assert_eq!(format!("{ucx}"), "base_dir=\"abc/defg\"");
     }
     #[test]
     fn test_from_str_void() {
