@@ -171,3 +171,74 @@ pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, Opt
     //
     Ok(conf)
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    //
+    #[test]
+    fn test_cmdopt() {
+        assert_eq!(CmdOp::Color, CmdOp::from(0));
+        assert_eq!(CmdOp::Color.to(), 0);
+    }
+    #[test]
+    fn test_value_to_string() {
+        #[rustfmt::skip]
+        let opt = Opt { sho: 0u8, lon: "color", has: Arg::Yes, num: CmdOp::Color.to(), };
+        #[rustfmt::skip]
+        let nv = flood_tide::NameVal { opt: &opt, val: None, };
+        //
+        let r = value_to_string(&nv);
+        assert_eq!(
+            format!("{r:#?}"),
+            concat!(
+                "Err(\n",
+                "    OptParseError {\n",
+                "        kind: MissingOptionArgument,\n",
+                "        desc1: \"color\",\n",
+                "        desc2: None,\n",
+                "    },\n)"
+            )
+        );
+    }
+    #[test]
+    fn test_value_to_opt_color_when() {
+        #[rustfmt::skip]
+        let opt = Opt { sho: 0u8, lon: "color", has: Arg::Yes, num: CmdOp::Color.to(), };
+        #[rustfmt::skip]
+        let nv = flood_tide::NameVal { opt: &opt, val: None, };
+        //
+        let r = value_to_opt_color_when(&nv);
+        assert_eq!(
+            format!("{r:#?}"),
+            concat!(
+                "Err(\n",
+                "    OptParseError {\n",
+                "        kind: MissingOptionArgument,\n",
+                "        desc1: \"color\",\n",
+                "        desc2: None,\n",
+                "    },\n)"
+            )
+        );
+    }
+    #[test]
+    fn test_value_to_opt_uc_x_param() {
+        #[rustfmt::skip]
+        let opt = Opt { sho: 0u8, lon: "color", has: Arg::Yes, num: CmdOp::Color.to(), };
+        #[rustfmt::skip]
+        let nv = flood_tide::NameVal { opt: &opt, val: None, };
+        //
+        let r = value_to_opt_uc_x_param(&nv);
+        assert_eq!(
+            format!("{r:#?}"),
+            concat!(
+                "Err(\n",
+                "    OptParseError {\n",
+                "        kind: MissingOptionArgument,\n",
+                "        desc1: \"color\",\n",
+                "        desc2: None,\n",
+                "    },\n)"
+            )
+        );
+    }
+}

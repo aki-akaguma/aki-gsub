@@ -31,6 +31,6 @@ doc:
 
 tarpaulin:
 	#cargo tarpaulin --offline --engine llvm --out html --output-dir ./target
-	cargo tarpaulin --offline --engine llvm --out lcov --output-dir ./target
-	#cargo tarpaulin --offline --follow-exec --engine ptrace --out lcov --output-dir ./target
+	#cargo tarpaulin --offline --engine llvm --out lcov --output-dir ./target
+	cargo tarpaulin --offline --follow-exec --engine ptrace --out lcov --output-dir ./target
 	genhtml -o target/lcov --demangle-cpp target/lcov.info

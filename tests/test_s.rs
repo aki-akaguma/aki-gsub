@@ -253,6 +253,89 @@ mod test_s0 {
         assert_text_match!(buff!(sioe, sout), x_rvi_msg!());
         assert!(r.is_ok());
     }
+    #[test]
+    fn test_x_option_invalid() {
+        let (r, sioe) = do_execute!(&["-X", "red"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option argument: X: can not parse 'red'\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    #[test]
+    fn test_opt_color() {
+        let (r, sioe) = do_execute!(&["--color"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option argument: color\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    #[test]
+    fn test_opt_color_invalid() {
+        let (r, sioe) = do_execute!(&["--color", "red"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option argument: color: can not parse 'red'\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    #[test]
+    fn test_opt_color_auto() {
+        let (r, sioe) = do_execute!(&["--color", "auto"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    #[test]
+    fn test_no_format() {
+        let (r, sioe) = do_execute!(&["-e", "."]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option: e or f\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
 }
 
 mod test_s1 {

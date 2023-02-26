@@ -194,6 +194,84 @@ mod test_0 {
         assert_text_match!(&oup.stdout, x_rvi_msg!());
         assert!(oup.status.success());
     }
+    #[test]
+    fn test_x_option_invalid() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "red"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option argument: X: can not parse 'red'\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    #[test]
+    fn test_opt_color() {
+        let oup = exec_target(TARGET_EXE_PATH, ["--color"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option argument: color\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    #[test]
+    fn test_opt_color_invalid() {
+        let oup = exec_target(TARGET_EXE_PATH, ["--color", "red"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option argument: color: can not parse 'red'\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    #[test]
+    fn test_opt_color_auto() {
+        let oup = exec_target(TARGET_EXE_PATH, ["--color", "auto"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    #[test]
+    fn test_no_format() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-e", "."]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option: e or f\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
 } // mod test_0
 
 mod test_1 {
