@@ -36,7 +36,7 @@ runnel = "0.3"
 memx-cdy = "0.1"
 
 [dev-dependencies]
-indoc = "1.0"
+indoc = "2.0"
 assert-text = "0.2"
 exec-target = "0.2"
 

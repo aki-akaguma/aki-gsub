@@ -18,9 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * refactored `Makefile`
-* update depends: flood-tide(0.2.9), flood-tide-gen(0.1.20)
-* update depends: memx-cdy(0.1.11), runnel(0.3.16)
-* update depends: exec-taget(0.2.8), indoc(2.0.0), rust-version-info-file(0.1.8)
+* update depends: flood-tide(0.2.10), flood-tide-gen(0.1.20)
+* update depends: memx-cdy(0.1.12), runnel(0.3.17)
+* update depends: exec-taget(0.2.9), indoc(2.0.1), rust-version-info-file(0.1.9)
 
 ### Removed
 * `OptColorWhenParseError::description()` for `depricated`
