@@ -65,11 +65,7 @@ impl ::std::fmt::Display for OptUcXParamParseError {
     }
 }
 
-impl ::std::error::Error for OptUcXParamParseError {
-    fn description(&self) -> &str {
-        self.desc.as_str()
-    }
-}
+impl ::std::error::Error for OptUcXParamParseError {}
 //}}} OptUcXParamParseError
 
 #[cfg(test)]

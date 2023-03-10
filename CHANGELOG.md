@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * update depends: exec-taget(0.2.8), indoc(2.0.0), rust-version-info-file(0.1.8)
 
 ### Removed
+* `OptColorWhenParseError::description()` for `depricated`
+* `OptUcXParamParseError::description()` for `depricated`
 * `COPYING`
 
 ### Fixed

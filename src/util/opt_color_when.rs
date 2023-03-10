@@ -58,11 +58,7 @@ impl ::std::fmt::Display for OptColorWhenParseError {
     }
 }
 
-impl ::std::error::Error for OptColorWhenParseError {
-    fn description(&self) -> &str {
-        self.desc.as_str()
-    }
-}
+impl ::std::error::Error for OptColorWhenParseError {}
 //}}} OptColorWhenParseError
 
 #[cfg(test)]
