@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * rename: `config` to `config.toml`
+* remove: `cfg(has_not_matches)`
 * refactored `Makefile`
 * update depends: flood-tide(0.2.10), flood-tide-gen(0.1.20)
 * update depends: memx-cdy(0.1.12), runnel(0.3.17)

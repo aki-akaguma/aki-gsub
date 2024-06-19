@@ -74,8 +74,7 @@ macro_rules! x_rvi_msg {
         └── runnel v\d+\.\d+\.\d+
         (.|\n)*
         \[build-dependencies\]
-        ├── rust-version-info-file v\d+\.\d+\.\d+
-        └── rustc_version v\d+\.\d+\.\d+ \(\*\)
+        └── rust-version-info-file v\d+\.\d+\.\d+
         \[dev-dependencies\]
         ├── assert-text v\d+\.\d+\.\d+
         (.|\n)*

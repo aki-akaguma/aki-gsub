@@ -25,7 +25,6 @@ dependencies = [
  "regex",
  "runnel",
  "rust-version-info-file",
- "rustc_version",
 ]
 
 [[package]]
