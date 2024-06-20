@@ -13,7 +13,7 @@ dependencies = [
 
 [[package]]
 name = "aki-gsub"
-version = "0.1.37"
+version = "0.1.38"
 dependencies = [
  "anyhow",
  "assert-text",
