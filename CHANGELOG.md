@@ -20,9 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * rename: `config` to `config.toml`
 * remove: `cfg(has_not_matches)`
 * refactored `Makefile`
-* update depends: flood-tide(0.2.10), flood-tide-gen(0.1.20)
-* update depends: memx-cdy(0.1.12), runnel(0.3.17)
-* update depends: exec-taget(0.2.9), indoc(2.0.1), rust-version-info-file(0.1.9)
+* update depends: flood-tide(0.2.11), flood-tide-gen(0.1.22)
+* update depends: memx-cdy(0.1.13), runnel(0.3.19)
+* update depends: exec-taget(0.2.8), indoc(2.0.0), rust-version-info-file(0.1.10)
 
 ### Removed
 * `OptColorWhenParseError::description()` for `depricated`
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * license files
 * clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`
 * clippy: `uninlined_format_args`, `borrow_deref_ref`, `unused_imports`
-* rust-version: "1.56.0" to "1.58.0"
+* rust-version: "1.56.0" to "1.65.0"
 
 
 ## [0.1.37] (2023-01-11)

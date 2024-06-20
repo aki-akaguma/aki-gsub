@@ -72,7 +72,6 @@ macro_rules! x_rvi_msg {
         ├── regex v\d+\.\d+\.\d+
         (.|\n)*
         └── runnel v\d+\.\d+\.\d+
-        (.|\n)*
         \[build-dependencies\]
         └── rust-version-info-file v\d+\.\d+\.\d+
         \[dev-dependencies\]
