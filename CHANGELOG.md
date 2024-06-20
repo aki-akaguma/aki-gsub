@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * license files
 * clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`
 * clippy: `uninlined_format_args`, `borrow_deref_ref`, `unused_imports`
+* clippy: `derivable_impls`
 * rust-version: "1.56.0" to "1.65.0"
 
 
