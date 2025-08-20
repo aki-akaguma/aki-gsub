@@ -3,7 +3,6 @@ use crate::util::err::BrokenPipeError;
 use crate::util::OptColorWhen;
 use regex::{Captures, Regex};
 use runnel::RunnelIoe;
-use std::io::{BufRead, Write};
 
 pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result<()> {
     let mut regfmts: Vec<RegexAndFormat> = Vec::new();
@@ -95,7 +94,7 @@ fn do_match_proc(
     let color_end_s = env.color_seq_end.as_str();
     let color_is_alyways = matches!(conf.opt_color, OptColorWhen::Always);
     //
-    for line in sioe.pin().lock().lines() {
+    for line in sioe.pg_in().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
         let line_len: usize = line_ss.len();
@@ -149,15 +148,17 @@ fn do_match_proc(
                 out_s.push_str(&line_ss[prev_ed..]);
             }
             //
-            #[rustfmt::skip]
-            sioe.pout().lock().write_fmt(format_args!("{out_s}\n"))?;
+            sioe.pg_out().write_line(out_s)?;
+            //#[rustfmt::skip]
+            //sioe.pg_out().lock().write_fmt(format_args!("{out_s}\n"))?;
         } else if !conf.flg_quiet {
-            #[rustfmt::skip]
-            sioe.pout().lock().write_fmt(format_args!("{line_ss}\n"))?;
+            sioe.pg_out().write_line(line_s)?;
+            //#[rustfmt::skip]
+            //sioe.pg_out().lock().write_fmt(format_args!("{line_ss}\n"))?;
         }
     }
     //
-    sioe.pout().lock().flush()?;
+    sioe.pg_out().flush_line()?;
     //
     Ok(())
 }

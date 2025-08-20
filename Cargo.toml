@@ -32,7 +32,7 @@ anyhow = "1.0"
 atty = "0.2"
 flood-tide = { version="0.2", default-features=true, features=["stop_at_mm"] }
 regex = "1.7"
-runnel = "0.3"
+runnel = "0.4"
 memx-cdy = "0.1"
 
 [dev-dependencies]
