@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * updated: runnel(0.4.0)
 * updated: rust-version-info-file(0.2.0)
+* updated: regex(1.11)
 * refactored `lib.rs`
 
 ### Fixed
