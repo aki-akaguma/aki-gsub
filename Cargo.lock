@@ -181,9 +181,9 @@ checksum = "6112b6072a9fecda1b47bb520c68ec022ff03421346bdc74d631cdd4fcbf2d8d"
 
 [[package]]
 name = "rust-version-info-file"
-version = "0.1.10"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7de7031f9d11d2d60f64023240f14eec932645568be778a83fc6debb9227d577"
+checksum = "4f61f9ca64683b54015215337eccbe254c0154a9107c4b543aa60d1cec6476e9"
 
 [[package]]
 name = "winapi"

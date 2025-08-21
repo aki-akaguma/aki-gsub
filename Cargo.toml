@@ -41,7 +41,7 @@ assert-text = "0.2"
 exec-target = "0.2"
 
 [build-dependencies]
-rust-version-info-file = "0.1"
+rust-version-info-file = "0.2"
 
 [workspace]
 members = [
