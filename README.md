@@ -13,7 +13,7 @@ the substitude text program.
 ## Features
 
 - the substitude text command, replace via regex.
-- minimum support rustc 1.58.1 (db9d1b20b 2022-01-20)
+- minimum support rustc 1.65.0 (897e37553 2022-11-02)
 
 ## Command help
 
