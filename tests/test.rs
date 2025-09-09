@@ -1,68 +1,7 @@
 const TARGET_EXE_PATH: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
 
-macro_rules! help_msg {
-    () => {
-        concat!(
-            version_msg!(),
-            "\n",
-            indoc::indoc!(
-                r#"
-            Usage:
-              aki-gsub [options]
-
-            substitude text command, replace via regex.
-
-            Options:
-                  --color <when>    use markers to highlight the matching strings
-              -e, --exp <exp>       regular expression
-              -f, --format <fmt>    replace format
-              -n, --quiet           no output unmach lines
-
-              -H, --help        display this help and exit
-              -V, --version     display version information and exit
-              -X <x-options>    x options. try -X help
-
-            Option Parameters:
-              <when>    'always', 'never', or 'auto'
-              <exp>     regular expression can has capture groups
-              <fmt>     format can has capture group: $0, $1, $2, ...
-
-            Environments:
-              AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi
-              AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi
-
-            Examples:
-              Leaving one character between 'a' and 'c', converts 'a' and 'c'
-              on both sides to '*':
-                echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
-              result output:
-                *b**b*a
-
-              Converts 'a' to '*' and 'c' to '@':
-                echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
-              result output:
-                *b@*b@*
-            "#
-            ),
-            "\n",
-        )
-    };
-}
-
-macro_rules! x_help_msg {
-    () => {
-        concat!(
-            indoc::indoc!(
-                r#"
-            Options:
-              -X rust-version-info     display rust version info and exit
-              -X base_dir=<path>       set <path> is base directory
-            "#
-            ),
-            "\n",
-        )
-    };
-}
+#[macro_use]
+mod helper;
 
 macro_rules! x_rvi_msg {
     () => {
@@ -87,28 +26,31 @@ macro_rules! x_rvi_msg {
     };
 }
 
-macro_rules! try_help_msg {
+macro_rules! color_start {
+    //() => { "\u{1B}[01;31m" }
     () => {
-        "Try --help for help.\n"
+        "<S>"
     };
 }
-
-macro_rules! program_name {
+macro_rules! color_end {
+    //() => {"\u{1B}[0m"}
     () => {
-        "aki-gsub"
+        "<E>"
     };
 }
-
-macro_rules! version_msg {
-    () => {
-        concat!(program_name!(), " ", env!("CARGO_PKG_VERSION"), "\n")
-    };
-}
-
-macro_rules! fixture_text10k {
-    () => {
-        "fixtures/text10k.txt"
-    };
+macro_rules! env_1 {
+    () => {{
+        let mut env: HashMap<String, String> = HashMap::new();
+        env.insert(
+            "AKI_GSUB_COLOR_SEQ_ST".to_string(),
+            color_start!().to_string(),
+        );
+        env.insert(
+            "AKI_GSUB_COLOR_SEQ_ED".to_string(),
+            color_end!().to_string(),
+        );
+        env
+    }};
 }
 
 mod test_0 {
@@ -154,54 +96,6 @@ mod test_0 {
                 ": ",
                 "Missing option: e\n",
                 "Unexpected argument: \n",
-                try_help_msg!()
-            )
-        );
-        assert_eq!(oup.stdout, "");
-        assert!(!oup.status.success());
-    }
-    #[test]
-    fn test_x_option() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-X"]);
-        assert_eq!(
-            oup.stderr,
-            concat!(
-                program_name!(),
-                ": ",
-                "Missing option argument: X\n",
-                "Missing option: e\n",
-                try_help_msg!()
-            )
-        );
-        assert_eq!(oup.stdout, "");
-        assert!(!oup.status.success());
-    }
-    #[test]
-    fn test_x_option_help() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help"]);
-        assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, x_help_msg!());
-        assert!(oup.status.success());
-    }
-    #[test]
-    fn test_x_option_rvi() {
-        use assert_text::assert_text_match;
-        //
-        let oup = exec_target(TARGET_EXE_PATH, ["-X", "rust-version-info"]);
-        assert_eq!(oup.stderr, "");
-        assert_text_match!(&oup.stdout, x_rvi_msg!());
-        assert!(oup.status.success());
-    }
-    #[test]
-    fn test_x_option_invalid() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-X", "red"]);
-        assert_eq!(
-            oup.stderr,
-            concat!(
-                program_name!(),
-                ": ",
-                "Invalid option argument: X: can not parse 'red'\n",
-                "Missing option: e\n",
                 try_help_msg!()
             )
         );
@@ -270,7 +164,75 @@ mod test_0 {
         assert_eq!(oup.stdout, "");
         assert!(!oup.status.success());
     }
-} // mod test_0
+}
+
+mod test_0_x_options {
+    use exec_target::exec_target;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
+    //
+    #[test]
+    fn test_x_option() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-X"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option argument: X\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    //
+    #[test]
+    fn test_x_option_help() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help"]);
+        assert_eq!(oup.stderr, "");
+        assert!(oup.stdout.contains("Options:"));
+        assert!(oup.stdout.contains("-X rust-version-info"));
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_x_option_rust_version_info() {
+        use assert_text::assert_text_match;
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "rust-version-info"]);
+        assert_eq!(oup.stderr, "");
+        assert!(oup.stdout.contains("rustc"));
+        assert_text_match!(&oup.stdout, x_rvi_msg!());
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_multiple_x_options() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help", "-X", "rust-version-info"]);
+        assert_eq!(oup.stderr, "");
+        // The first one should be executed and the program should exit.
+        assert!(oup.stdout.contains("Options:"));
+        assert!(!oup.stdout.contains("rustc"));
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_x_option_invalid() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "red"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option argument: X: can not parse 'red'\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+}
 
 mod test_1 {
     use exec_target::exec_target_with_in;
@@ -325,33 +287,6 @@ mod test_1_color {
     use exec_target::exec_target_with_env_in;
     use std::collections::HashMap;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    //
-    macro_rules! color_start {
-        //() => { "\u{1B}[01;31m" }
-        () => {
-            "<S>"
-        };
-    }
-    macro_rules! color_end {
-        //() => {"\u{1B}[0m"}
-        () => {
-            "<E>"
-        };
-    }
-    macro_rules! env_1 {
-        () => {{
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert(
-                "AKI_GSUB_COLOR_SEQ_ST".to_string(),
-                color_start!().to_string(),
-            );
-            env.insert(
-                "AKI_GSUB_COLOR_SEQ_ED".to_string(),
-                color_end!().to_string(),
-            );
-            env
-        }};
-    }
     //
     #[test]
     fn test_t1() {
@@ -443,33 +378,6 @@ mod test_2_color {
     use exec_target::exec_target_with_env_in;
     use std::collections::HashMap;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    //
-    macro_rules! color_start {
-        //() => { "\u{1B}[01;31m" }
-        () => {
-            "<S>"
-        };
-    }
-    macro_rules! color_end {
-        //() => {"\u{1B}[0m"}
-        () => {
-            "<E>"
-        };
-    }
-    macro_rules! env_1 {
-        () => {{
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert(
-                "AKI_GSUB_COLOR_SEQ_ST".to_string(),
-                color_start!().to_string(),
-            );
-            env.insert(
-                "AKI_GSUB_COLOR_SEQ_ED".to_string(),
-                color_end!().to_string(),
-            );
-            env
-        }};
-    }
     //
     #[test]
     fn test_multi_line() {

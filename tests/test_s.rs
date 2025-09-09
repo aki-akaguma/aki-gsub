@@ -1,66 +1,5 @@
-macro_rules! help_msg {
-    () => {
-        concat!(
-            version_msg!(),
-            "\n",
-            indoc::indoc!(
-                r#"
-            Usage:
-              aki-gsub [options]
-
-            substitude text command, replace via regex.
-
-            Options:
-                  --color <when>    use markers to highlight the matching strings
-              -e, --exp <exp>       regular expression
-              -f, --format <fmt>    replace format
-              -n, --quiet           no output unmach lines
-
-              -H, --help        display this help and exit
-              -V, --version     display version information and exit
-              -X <x-options>    x options. try -X help
-
-            Option Parameters:
-              <when>    'always', 'never', or 'auto'
-              <exp>     regular expression can has capture groups
-              <fmt>     format can has capture group: $0, $1, $2, ...
-
-            Environments:
-              AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi
-              AKI_GSUB_COLOR_SEQ_ED     color end sequence specified by ansi
-
-            Examples:
-              Leaving one character between 'a' and 'c', converts 'a' and 'c'
-              on both sides to '*':
-                echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
-              result output:
-                *b**b*a
-
-              Converts 'a' to '*' and 'c' to '@':
-                echo "abcabca" | aki-gsub -e "a" -f "*" -e "c" -f "@"
-              result output:
-                *b@*b@*
-            "#
-            ),
-            "\n",
-        )
-    };
-}
-
-macro_rules! x_help_msg {
-    () => {
-        concat!(
-            indoc::indoc!(
-                r#"
-            Options:
-              -X rust-version-info     display rust version info and exit
-              -X base_dir=<path>       set <path> is base directory
-            "#
-            ),
-            "\n",
-        )
-    };
-}
+#[macro_use]
+mod helper;
 
 macro_rules! x_rvi_msg {
     () => {
@@ -84,32 +23,6 @@ macro_rules! x_rvi_msg {
         )
     };
 }
-
-macro_rules! try_help_msg {
-    () => {
-        "Try --help for help.\n"
-    };
-}
-
-macro_rules! program_name {
-    () => {
-        "aki-gsub"
-    };
-}
-
-macro_rules! version_msg {
-    () => {
-        concat!(program_name!(), " ", env!("CARGO_PKG_VERSION"), "\n")
-    };
-}
-
-/*
-macro_rules! fixture_text10k {
-    () => {
-        "fixtures/text10k.txt"
-    };
-}
-*/
 
 macro_rules! do_execute {
     ($args:expr) => {
@@ -168,7 +81,29 @@ macro_rules! buff {
     };
 }
 
-mod test_s0 {
+//
+macro_rules! color_start {
+    //() => { "\u{1B}[01;31m" }
+    () => {
+        "<S>"
+    };
+}
+macro_rules! color_end {
+    //() => {"\u{1B}[0m"}
+    () => {
+        "<E>"
+    };
+}
+macro_rules! env_1 {
+    () => {{
+        let mut env = conf::EnvConf::new();
+        env.color_seq_start = color_start!().to_string();
+        env.color_seq_end = color_end!().to_string();
+        env
+    }};
+}
+
+mod test_0_s {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -212,56 +147,6 @@ mod test_s0 {
                 program_name!(), ": ",
                 "Missing option: e\n",
                 "Unexpected argument: \n",
-                try_help_msg!()
-            )
-        );
-        assert_eq!(buff!(sioe, sout), "");
-        assert!(r.is_err());
-    }
-    #[test]
-    fn test_x_option() {
-        let (r, sioe) = do_execute!(&["-X"]);
-        #[rustfmt::skip]
-        assert_eq!(
-            buff!(sioe, serr),
-            concat!(
-                program_name!(),
-                ": ",
-                "Missing option argument: X\n",
-                "Missing option: e\n",
-                try_help_msg!()
-            )
-        );
-        assert_eq!(buff!(sioe, sout), "");
-        assert!(r.is_err());
-    }
-    #[test]
-    fn test_x_option_help() {
-        let (r, sioe) = do_execute!(&["-X", "help"]);
-        assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), x_help_msg!());
-        assert!(r.is_ok());
-    }
-    #[test]
-    fn test_x_option_rvi() {
-        use assert_text::assert_text_match;
-        //
-        let (r, sioe) = do_execute!(&["-X", "rust-version-info"]);
-        assert_eq!(buff!(sioe, serr), "");
-        assert_text_match!(buff!(sioe, sout), x_rvi_msg!());
-        assert!(r.is_ok());
-    }
-    #[test]
-    fn test_x_option_invalid() {
-        let (r, sioe) = do_execute!(&["-X", "red"]);
-        #[rustfmt::skip]
-        assert_eq!(
-            buff!(sioe, serr),
-            concat!(
-                program_name!(),
-                ": ",
-                "Invalid option argument: X: can not parse 'red'\n",
-                "Missing option: e\n",
                 try_help_msg!()
             )
         );
@@ -336,7 +221,85 @@ mod test_s0 {
     }
 }
 
-mod test_s1 {
+mod test_0_x_options_s {
+    use libaki_gsub::*;
+    use runnel::medium::stringio::*;
+    use runnel::*;
+    //
+    #[test]
+    fn test_x_option() {
+        let (r, sioe) = do_execute!(&["-X"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option argument: X\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    //
+    #[test]
+    fn test_x_rust_version_info() {
+        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(!buff!(sioe, sout).is_empty());
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_x_option_help() {
+        let (r, sioe) = do_execute!(["-X", "help"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(buff!(sioe, sout).contains("Options:"));
+        assert!(buff!(sioe, sout).contains("-X rust-version-info"));
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_x_option_rust_version_info() {
+        use assert_text::assert_text_match;
+        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(buff!(sioe, sout).contains("rustc"));
+        assert_text_match!(buff!(sioe, sout), x_rvi_msg!());
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_multiple_x_options() {
+        let (r, sioe) = do_execute!(["-X", "help", "-X", "rust-version-info"]);
+        assert_eq!(buff!(sioe, serr), "");
+        // The first one should be executed and the program should exit.
+        assert!(buff!(sioe, sout).contains("Options:"));
+        assert!(!buff!(sioe, sout).contains("rustc"));
+        assert!(r.is_ok());
+    }
+    #[test]
+    fn test_x_option_invalid() {
+        let (r, sioe) = do_execute!(&["-X", "red"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option argument: X: can not parse 'red'\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+}
+
+mod test_1_s {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -375,32 +338,11 @@ mod test_s1 {
     }
 }
 
-mod test_s1_color {
+mod test_1_color_s {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
     use std::io::Write;
-    //
-    macro_rules! color_start {
-        //() => { "\u{1B}[01;31m" }
-        () => {
-            "<S>"
-        };
-    }
-    macro_rules! color_end {
-        //() => {"\u{1B}[0m"}
-        () => {
-            "<E>"
-        };
-    }
-    macro_rules! env_1 {
-        () => {{
-            let mut env = conf::EnvConf::new();
-            env.color_seq_start = color_start!().to_string();
-            env.color_seq_end = color_end!().to_string();
-            env
-        }};
-    }
     //
     #[test]
     fn test_t1() {
@@ -455,7 +397,7 @@ mod test_s1_color {
     }
 }
 
-mod test_s2 {
+mod test_2_s {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -478,32 +420,11 @@ mod test_s2 {
     }
 }
 
-mod test_s2_color {
+mod test_2_color_s {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
     use std::io::Write;
-    //
-    macro_rules! color_start {
-        //() => { "\u{1B}[01;31m" }
-        () => {
-            "<S>"
-        };
-    }
-    macro_rules! color_end {
-        //() => {"\u{1B}[0m"}
-        () => {
-            "<E>"
-        };
-    }
-    macro_rules! env_1 {
-        () => {{
-            let mut env = conf::EnvConf::new();
-            env.color_seq_start = color_start!().to_string();
-            env.color_seq_end = color_end!().to_string();
-            env
-        }};
-    }
     //
     #[test]
     fn test_multi_line() {
@@ -538,7 +459,7 @@ mod test_s2_color {
     }
 }
 
-mod test_s3 {
+mod test_3_s {
     /*
     use libaki_gsub::*;
     use runnel::RunnelIoe;
@@ -552,7 +473,7 @@ mod test_s3 {
     */
 }
 
-mod test_s4 {
+mod test_4_s {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
