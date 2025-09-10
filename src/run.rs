@@ -120,6 +120,9 @@ fn make_replaced_out_one(line_offset: usize, caps: &Captures<'_>, fmt: &str) -> 
             if cur >= fmt_len {
                 break;
             }
+        } else if b == b'$' {
+            // case of "$$"
+            v_out_s.push_str("$");
         } else {
             cur -= 1;
         }
