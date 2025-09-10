@@ -69,6 +69,9 @@ fn make_replaced_out_vec(
             };
             let rep_out = make_replaced_out_one(st, &caps, fmt);
             routs.push(rep_out);
+            if mat.start() == mat.end() {
+                break;
+            }
             st += mat.end();
             if st >= line_len {
                 break;
@@ -166,7 +169,7 @@ fn make_out_s(
         if prev_ed < next_st {
             out_s.push_str(&line_ss[prev_ed..next_st]);
         }
-        if next_st >= line_len {
+        if next_st > line_len {
             prev_ed = rout.ed;
             break;
         }

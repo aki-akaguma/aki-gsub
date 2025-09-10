@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * minimum support version in doc
 * bug: replacement is "$$"
 * bug: named capture groups
+* bug: empty match
 
 ## [0.1.38] (2024-06-20)
 ### Added
