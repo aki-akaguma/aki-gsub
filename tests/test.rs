@@ -471,3 +471,375 @@ mod test_4 {
         assert!(oup.status.success());
     }
 }
+
+mod test_4_more {
+    use exec_target::exec_target_with_in;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
+    //
+    #[test]
+    fn test_file_input() {
+        let long_string = std::fs::read_to_string("fixtures/text10k.txt").unwrap();
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "A", "-f", "b"],
+            long_string.as_bytes(),
+        );
+        assert_eq!(oup.stderr, "");
+        assert!(oup.stdout.contains("bBCDEFG"));
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_long_input() {
+        let long_string = "a".repeat(10000);
+        let expected_output = "b".repeat(10000) + "\n";
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a", "-f", "b"],
+            long_string.as_bytes(),
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, expected_output);
+        assert!(oup.status.success());
+    }
+}
+
+mod test_5_replace {
+    use exec_target::exec_target_with_in;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
+    //
+    #[test]
+    fn test_replace_with_newline() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a", "-f", "b\nc"],
+            b"daded" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "db\ncded\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_replace_with_tab() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a", "-f", "b\tc"],
+            b"daded" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "db\tcded\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_replace_with_dollar() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "$$"], b"daded" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "d$ded\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_unicode_input() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "ü", "-f", "ue"], "fübar".as_bytes());
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "fuebar\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_unicode_replacement() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "u", "-f", "ü"], b"fubar" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "fübar\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_quiet_no_match() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-n", "-e", "z", "-f", "y"],
+            b"abc" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_multiple_replacements() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a", "-f", "b", "-e", "c", "-f", "d"],
+            b"abc" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "bbd\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_literal_backslash() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "\\"], b"bac" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "b\\c\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_complex_regex() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "([a-z]+)-([0-9]+)", "-f", "$2-$1"],
+            b"abc-123 xyz-456" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "123-abc 456-xyz\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_backreference() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "(a)b(c)", "-f", "$2$1"],
+            b"abc" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "ca\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_replacement_with_original_string_part() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a(b)c", "-f", "x$1y"],
+            b"abcde" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "xbyde\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_multiple_capture_groups_replacement() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "(a)(b)(c)", "-f", "$3$2$1"],
+            b"abc" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "cba\n");
+        assert!(oup.status.success());
+    }
+}
+
+mod test_6_regex {
+    use exec_target::exec_target_with_in;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
+    //
+    #[test]
+    fn test_overlapping_matches() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "aba", "-f", "x"], b"ababa" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "xba\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_case_insensitive() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "(?i)a", "-f", "b"], b"AbC" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "bbC\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_empty_match_begin() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "^", "-f", "x"], b"abc" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "xabc\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_empty_match_end() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "$", "-f", "x"], b"abc" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "abcx\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_quantifier_regex() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a{2,3}", "-f", "x"],
+            b"aaabaaba" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "xbxba\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_alternation_regex() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a|b", "-f", "x"], b"abc" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "xxc\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_character_class_regex() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "[ab]", "-f", "x"], b"abc" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "xxc\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_word_boundary_regex() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "\\ba\\b", "-f", "x"],
+            b"a ab a" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "x ab x\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_non_capturing_group_regex() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "(?:a)b", "-f", "x"], b"ab" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "x\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_greedy_quantifier_regex() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a.*b", "-f", "x"],
+            b"acbacb" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "x\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_lazy_quantifier_regex() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a.*?b", "-f", "x"],
+            b"acbacd" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "xacd\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_possessive_quantifier_regex() {
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a*+", "-f", "x"], b"aa" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "x\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
+    fn test_named_capture_groups() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            [
+                "-e",
+                "(?P<first>[a-z]+)-(?P<second>[0-9]+)",
+                "-f",
+                "${second}-${first}",
+            ],
+            b"abc-123" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "123-abc\n");
+        assert!(oup.status.success());
+    }
+}
+
+mod test_6_regex_unsupport {
+    use exec_target::exec_target_with_in;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
+    //
+    #[test]
+    fn test_look_ahead() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a(?=b)", "-f", "x"],
+            b"abac" as &[u8],
+        );
+        // aki-gsub: regex parse error:
+        //     a(?=b)
+        //      ^^^
+        // error: look-around, including look-ahead and look-behind, is not supported
+        assert!(oup.stderr.contains("regex parse error"));
+        assert!(oup.stderr.contains("look-ahead"));
+        assert!(oup.stderr.contains("is not supported"));
+        assert!(!oup.status.success());
+    }
+    //
+    #[test]
+    fn test_look_behind() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "(?<=b)a", "-f", "x"],
+            b"baca" as &[u8],
+        );
+        // aki-gsub: regex parse error:
+        //     (?<=b)a
+        //     ^^^^
+        // error: look-around, including look-ahead and look-behind, is not supported
+        assert!(oup.stderr.contains("regex parse error"));
+        assert!(oup.stderr.contains("look-behind"));
+        assert!(oup.stderr.contains("is not supported"));
+        assert!(!oup.status.success());
+    }
+    //
+    #[test]
+    fn test_atomic_group_regex() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "(?>ab|a)c", "-f", "x"],
+            b"abc" as &[u8],
+        );
+        // aki-gsub: regex parse error:
+        //     (?>ab|a)c
+        //       ^
+        // error: unrecognized flag
+        assert!(oup.stderr.contains("regex parse error"));
+        assert!(oup.stderr.contains("unrecognized flag"));
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    //
+    #[test]
+    fn test_backreference_to_named_group_regex() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "(?P<name>a)b\\k<name>", "-f", "x"],
+            b"aba" as &[u8],
+        );
+        // aki-gsub: regex parse error:
+        //     (?P<name>a)b\k<name>
+        //                 ^^
+        // error: unrecognized escape sequence
+        assert!(oup.stderr.contains("regex parse error"));
+        assert!(oup.stderr.contains("unrecognized escape sequence"));
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+}
