@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * `specs`
 * more tests
+* invalid utf8 input test
 
 ### Changed
 * `IntoIterator` compatibility for args in `execute()`

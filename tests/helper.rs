@@ -86,6 +86,13 @@ macro_rules! version_msg {
 }
 
 #[allow(unused_macros)]
+macro_rules! fixture_invalid_utf8 {
+    () => {
+        "fixtures/invalid_utf8.txt"
+    };
+}
+
+#[allow(unused_macros)]
 macro_rules! fixture_text10k {
     () => {
         "fixtures/text10k.txt"

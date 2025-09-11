@@ -138,13 +138,30 @@ mod test_0_s {
         assert!(r.is_ok());
     }
     #[test]
+    fn test_invalid_opt() {
+        let (r, sioe) = do_execute!(["-z"]);
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option: z\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    #[test]
     fn test_non_option() {
         let (r, sioe) = do_execute!([""]);
         #[rustfmt::skip]
         assert_eq!(
             buff!(sioe, serr),
             concat!(
-                program_name!(), ": ",
+                program_name!(),
+                ": ",
                 "Missing option: e\n",
                 "Unexpected argument: \n",
                 try_help_msg!()
@@ -219,6 +236,22 @@ mod test_0_s {
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_err());
     }
+    #[test]
+    fn test_no_pair_format() {
+        let (r, sioe) = do_execute!(["-e", "a", "-e", "b", "-f", "X"]);
+        #[rustfmt::skip]
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option: e or f\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
 }
 
 mod test_0_x_options_s {
@@ -242,14 +275,6 @@ mod test_0_x_options_s {
         );
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_err());
-    }
-    //
-    #[test]
-    fn test_x_rust_version_info() {
-        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
-        assert_eq!(buff!(sioe, serr), "");
-        assert!(!buff!(sioe, sout).is_empty());
-        assert!(r.is_ok());
     }
     //
     #[test]
@@ -304,6 +329,19 @@ mod test_1_s {
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
     use std::io::Write;
+    //
+    #[test]
+    fn test_invalid_utf8() {
+        let v = std::fs::read(fixture_invalid_utf8!()).unwrap();
+        let s = unsafe { String::from_utf8_unchecked(v) };
+        let (r, sioe) = do_execute!(["-e", "a", "-f", "x"], &s);
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
     //
     #[test]
     fn test_t1() {

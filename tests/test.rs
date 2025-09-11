@@ -87,6 +87,22 @@ mod test_0 {
         assert!(oup.status.success());
     }
     #[test]
+    fn test_invalid_opt() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-z"]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option: z\n",
+                "Missing option: e\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    #[test]
     fn test_non_option() {
         let oup = exec_target(TARGET_EXE_PATH, [""]);
         assert_eq!(
@@ -152,6 +168,21 @@ mod test_0 {
     #[test]
     fn test_no_format() {
         let oup = exec_target(TARGET_EXE_PATH, ["-e", "."]);
+        assert_eq!(
+            oup.stderr,
+            concat!(
+                program_name!(),
+                ": ",
+                "Missing option: e or f\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
+    #[test]
+    fn test_no_pair_format() {
+        let oup = exec_target(TARGET_EXE_PATH, ["-e", "a", "-e", "b", "-f", "X"]);
         assert_eq!(
             oup.stderr,
             concat!(
@@ -237,6 +268,18 @@ mod test_0_x_options {
 mod test_1 {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
+    //
+    #[test]
+    fn test_invalid_utf8() {
+        let v = std::fs::read(fixture_invalid_utf8!()).unwrap();
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "x"], &v);
+        assert_eq!(
+            oup.stderr,
+            concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
+        );
+        assert_eq!(oup.stdout, "");
+        assert!(!oup.status.success());
+    }
     //
     #[test]
     fn test_t1() {
