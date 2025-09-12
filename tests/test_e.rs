@@ -3,57 +3,10 @@ const TARGET_EXE_PATH: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAM
 #[macro_use]
 mod helper;
 
-macro_rules! x_rvi_msg {
-    () => {
-        indoc::indoc!(
-            r#"
-        rustc \d+\.\d+\.\d+(-(beta\.\d+|nightly))? \(.* \d+-\d+-\d+\)
-        aki-gsub v\d+\.\d+\.\d+
-        (.|\n)*
-        ├── regex v\d+\.\d+\.\d+
-        (.|\n)*
-        └── runnel v\d+\.\d+\.\d+
-        \[build-dependencies\]
-        └── rust-version-info-file v\d+\.\d+\.\d+
-        \[dev-dependencies\]
-        ├── assert-text v\d+\.\d+\.\d+
-        (.|\n)*
-        ├── exec-target v\d+\.\d+\.\d+
-        └── indoc v\d+\.\d+\.\d+ \(proc-macro\)
-        
-        "#
-        )
-    };
-}
+#[macro_use]
+mod helper_e;
 
-macro_rules! color_start {
-    //() => { "\u{1B}[01;31m" }
-    () => {
-        "<S>"
-    };
-}
-macro_rules! color_end {
-    //() => {"\u{1B}[0m"}
-    () => {
-        "<E>"
-    };
-}
-macro_rules! env_1 {
-    () => {{
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert(
-            "AKI_GSUB_COLOR_SEQ_ST".to_string(),
-            color_start!().to_string(),
-        );
-        env.insert(
-            "AKI_GSUB_COLOR_SEQ_ED".to_string(),
-            color_end!().to_string(),
-        );
-        env
-    }};
-}
-
-mod test_0 {
+mod test_0_e {
     use exec_target::exec_target;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
@@ -197,7 +150,7 @@ mod test_0 {
     }
 }
 
-mod test_0_x_options {
+mod test_0_x_options_e {
     use exec_target::exec_target;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -265,7 +218,7 @@ mod test_0_x_options {
     }
 }
 
-mod test_1 {
+mod test_1_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -326,9 +279,8 @@ mod test_1 {
     }
 }
 
-mod test_1_color {
+mod test_1_color_e {
     use exec_target::exec_target_with_env_in;
-    use std::collections::HashMap;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -388,7 +340,7 @@ mod test_1_color {
     }
 }
 
-mod test_2 {
+mod test_2_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -417,9 +369,8 @@ mod test_2 {
     }
 }
 
-mod test_2_color {
+mod test_2_color_e {
     use exec_target::exec_target_with_env_in;
-    use std::collections::HashMap;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -457,7 +408,7 @@ mod test_2_color {
     }
 }
 
-mod test_3 {
+mod test_3_e {
     use exec_target::exec_target;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -475,7 +426,7 @@ mod test_3 {
     }
 }
 
-mod test_4 {
+mod test_4_e {
     use exec_target::exec_target_with_in;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
@@ -515,7 +466,7 @@ mod test_4 {
     }
 }
 
-mod test_4_more {
+mod test_4_more_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -547,7 +498,7 @@ mod test_4_more {
     }
 }
 
-mod test_5_replace {
+mod test_5_replace_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -680,7 +631,7 @@ mod test_5_replace {
     }
 }
 
-mod test_6_regex {
+mod test_6_regex_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -814,7 +765,7 @@ mod test_6_regex {
     }
 }
 
-mod test_6_regex_unsupport {
+mod test_6_regex_unsupport_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //

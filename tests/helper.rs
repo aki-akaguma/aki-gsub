@@ -98,3 +98,54 @@ macro_rules! fixture_text10k {
         "fixtures/text10k.txt"
     };
 }
+
+//
+#[allow(unused_macros)]
+macro_rules! color_start {
+    //() => { "\u{1B}[01;31m" }
+    () => {
+        "<S>"
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! color_end {
+    //() => {"\u{1B}[0m"}
+    () => {
+        "<E>"
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! env_1 {
+    () => {{
+        vec![
+            ("AKI_GSUB_COLOR_SEQ_ST", color_start!()),
+            ("AKI_GSUB_COLOR_SEQ_ED", color_end!()),
+        ]
+    }};
+}
+
+#[allow(unused_macros)]
+macro_rules! x_rvi_msg {
+    () => {
+        indoc::indoc!(
+            r#"
+        rustc \d+\.\d+\.\d+(-(beta\.\d+|nightly))? \(.* \d+-\d+-\d+\)
+        aki-gsub v\d+\.\d+\.\d+
+        (.|\n)*
+        ├── regex v\d+\.\d+\.\d+
+        (.|\n)*
+        └── runnel v\d+\.\d+\.\d+
+        \[build-dependencies\]
+        └── rust-version-info-file v\d+\.\d+\.\d+
+        \[dev-dependencies\]
+        ├── assert-text v\d+\.\d+\.\d+
+        (.|\n)*
+        ├── exec-target v\d+\.\d+\.\d+
+        └── indoc v\d+\.\d+\.\d+ \(proc-macro\)
+        
+        "#
+        )
+    };
+}

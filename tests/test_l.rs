@@ -1,109 +1,10 @@
 #[macro_use]
 mod helper;
 
-macro_rules! x_rvi_msg {
-    () => {
-        indoc::indoc!(
-            r#"
-        rustc \d+\.\d+\.\d+(-(beta\.\d+|nightly))? \(.* \d+-\d+-\d+\)
-        aki-gsub v\d+\.\d+\.\d+
-        (.|\n)*
-        ├── regex v\d+\.\d+\.\d+
-        (.|\n)*
-        └── runnel v\d+\.\d+\.\d+
-        \[build-dependencies\]
-        └── rust-version-info-file v\d+\.\d+\.\d+
-        \[dev-dependencies\]
-        ├── assert-text v\d+\.\d+\.\d+
-        (.|\n)*
-        ├── exec-target v\d+\.\d+\.\d+
-        └── indoc v\d+\.\d+\.\d+ \(proc-macro\)
-        
-        "#
-        )
-    };
-}
+#[macro_use]
+mod helper_l;
 
-macro_rules! do_execute {
-    ($args:expr) => {
-        do_execute!($args, "")
-    };
-    ($args:expr, $sin:expr) => {{
-        let sioe = RunnelIoe::new(
-            Box::new(StringIn::with_str($sin)),
-            #[allow(clippy::box_default)]
-            Box::new(StringOut::default()),
-            #[allow(clippy::box_default)]
-            Box::new(StringErr::default()),
-        );
-        let program = env!("CARGO_PKG_NAME");
-        let r = execute(&sioe, &program, $args);
-        match r {
-            Ok(_) => {}
-            Err(ref err) => {
-                let _ = sioe
-                    .pg_err()
-                    .lock()
-                    .write_fmt(format_args!("{}: {}\n", program, err));
-            }
-        };
-        (r, sioe)
-    }};
-    ($env:expr, $args:expr, $sin:expr) => {{
-        let sioe = RunnelIoe::new(
-            Box::new(StringIn::with_str($sin)),
-            #[allow(clippy::box_default)]
-            Box::new(StringOut::default()),
-            #[allow(clippy::box_default)]
-            Box::new(StringErr::default()),
-        );
-        let program = env!("CARGO_PKG_NAME");
-        let r = execute_env(&sioe, &program, $args, $env);
-        match r {
-            Ok(_) => {}
-            Err(ref err) => {
-                let _ = sioe
-                    .pg_err()
-                    .lock()
-                    .write_fmt(format_args!("{}: {}\n", program, err));
-            }
-        };
-        (r, sioe)
-    }};
-}
-
-macro_rules! buff {
-    ($sioe:expr, serr) => {
-        $sioe.pg_err().lock().buffer_to_string().as_str()
-    };
-    ($sioe:expr, sout) => {
-        $sioe.pg_out().lock().buffer_to_string().as_str()
-    };
-}
-
-//
-macro_rules! color_start {
-    //() => { "\u{1B}[01;31m" }
-    () => {
-        "<S>"
-    };
-}
-macro_rules! color_end {
-    //() => {"\u{1B}[0m"}
-    () => {
-        "<E>"
-    };
-}
-macro_rules! env_1 {
-    () => {{
-        let mut env = conf::EnvConf::new();
-        env.color_seq_start = color_start!().to_string();
-        env.color_seq_end = color_end!().to_string();
-        env
-    }};
-}
-
-mod test_0_s {
+mod test_0_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -254,7 +155,7 @@ mod test_0_s {
     }
 }
 
-mod test_0_x_options_s {
+mod test_0_x_options_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::*;
     use runnel::*;
@@ -324,7 +225,7 @@ mod test_0_x_options_s {
     }
 }
 
-mod test_1_s {
+mod test_1_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -376,7 +277,7 @@ mod test_1_s {
     }
 }
 
-mod test_1_color_s {
+mod test_1_color_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -384,8 +285,11 @@ mod test_1_color_s {
     //
     #[test]
     fn test_t1() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-e", "a", "-f", "1", "--color", "always"], "abcabca");
+        let (r, sioe) = do_execute!(
+            env_1!(),
+            ["-e", "a", "-f", "1", "--color", "always"],
+            "abcabca"
+        );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<S>1<E>bc<S>1<E>bc<S>1<E>\n");
         assert!(r.is_ok());
@@ -393,9 +297,8 @@ mod test_1_color_s {
     //
     #[test]
     fn test_t2() {
-        let env = env_1!();
         let (r, sioe) = do_execute!(
-            &env,
+            env_1!(),
             ["-e", "a(b)c", "-f", "$1", "--color", "always"],
             "abcabca"
         );
@@ -406,9 +309,8 @@ mod test_1_color_s {
     //
     #[test]
     fn test_t3() {
-        let env = env_1!();
         let (r, sioe) = do_execute!(
-            &env,
+            env_1!(),
             ["-e", "a(b)c", "-f", "$0", "--color", "always"],
             "abcabca"
         );
@@ -419,9 +321,8 @@ mod test_1_color_s {
     //
     #[test]
     fn test_t4() {
-        let env = env_1!();
         let (r, sioe) = do_execute!(
-            &env,
+            env_1!(),
             ["-e", "a(b)c", "-f", "$2", "--color", "always"],
             "abcabca"
         );
@@ -431,7 +332,7 @@ mod test_1_color_s {
     }
 }
 
-mod test_2_s {
+mod test_2_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -454,7 +355,7 @@ mod test_2_s {
     }
 }
 
-mod test_2_color_s {
+mod test_2_color_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -462,9 +363,8 @@ mod test_2_color_s {
     //
     #[test]
     fn test_multi_line() {
-        let env = env_1!();
         let (r, sioe) = do_execute!(
-            &env,
+            env_1!(),
             ["-e", "a", "-f", "1", "--color", "always"],
             "abcabca\noooooo\nabcabca\n"
         );
@@ -478,9 +378,8 @@ mod test_2_color_s {
     //
     #[test]
     fn test_multi_line_opt_n() {
-        let env = env_1!();
         let (r, sioe) = do_execute!(
-            &env,
+            env_1!(),
             ["-e", "a", "-f", "1", "-n", "--color", "always"],
             "abcabca\noooooo\nabcabca\n"
         );
@@ -493,7 +392,7 @@ mod test_2_color_s {
     }
 }
 
-mod test_3_s {
+mod test_3_l {
     /*
     use libaki_gsub::*;
     use runnel::RunnelIoe;
@@ -507,7 +406,7 @@ mod test_3_s {
     */
 }
 
-mod test_4_s {
+mod test_4_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -546,7 +445,7 @@ mod test_4_s {
     }
 }
 
-mod test_4_more_s {
+mod test_4_more_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -572,7 +471,7 @@ mod test_4_more_s {
     }
 }
 
-mod test_5_replace_s {
+mod test_5_replace_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -678,7 +577,7 @@ mod test_5_replace_s {
     }
 }
 
-mod test_6_regex_s {
+mod test_6_regex_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -797,7 +696,7 @@ mod test_6_regex_s {
     }
 }
 
-mod test_6_regex_unsupport_s {
+mod test_6_regex_unsupport_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;

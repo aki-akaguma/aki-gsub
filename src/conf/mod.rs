@@ -76,10 +76,30 @@ impl EnvConf {
             color_seq_end: a_color_seq_end,
         }
     }
+    pub fn from_array(ary: &[(&str, &str)]) -> Self {
+        let mut r = Self::new();
+        for a in ary {
+            match a.0 {
+                "AKI_GSUB_COLOR_SEQ_ST" => {
+                    r.color_seq_start = a.1.to_string();
+                }
+                "AKI_GSUB_COLOR_SEQ_ED" => {
+                    r.color_seq_end = a.1.to_string();
+                }
+                _ => (),
+            }
+        }
+        r
+    }
 }
 impl std::default::Default for EnvConf {
     fn default() -> EnvConf {
         EnvConf::new()
+    }
+}
+impl From<Vec<(&str, &str)>> for EnvConf {
+    fn from(a: Vec<(&str, &str)>) -> Self {
+        Self::from_array(&a)
     }
 }
 
