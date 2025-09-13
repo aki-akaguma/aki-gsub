@@ -56,7 +56,6 @@ macro_rules! x_help_msg {
                 r#"
             Options:
               -X rust-version-info     display rust version info and exit
-              -X base_dir=<path>       set <path> is base directory
             "#
             ),
             "\n",
