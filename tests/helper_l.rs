@@ -33,8 +33,7 @@ macro_rules! do_execute {
             Box::new(StringErr::default()),
         );
         let program = env!("CARGO_PKG_NAME");
-        let env = ($env).into();
-        let r = execute_env(&sioe, &program, $args, &env);
+        let r = execute_with_env(&sioe, &program, $args, $env);
         match r {
             Ok(_) => {}
             Err(ref err) => {

@@ -160,8 +160,11 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// ```rust
 /// use runnel::RunnelIoeBuilder;
 ///
-/// let r = libaki_gsub::execute(&RunnelIoeBuilder::new().build(),
-///     "gsub", &["-e", "a(.)c", "-f", "*$1*"]);
+/// let r = libaki_gsub::execute(
+///     &RunnelIoeBuilder::new().build(),
+///     "gsub",
+///     &["-e", "a(.)c", "-f", "*$1*"]
+/// );
 /// ```
 ///
 /// The `$1` mean 1st capture.
@@ -173,8 +176,11 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// ```rust
 /// use runnel::RunnelIoeBuilder;
 ///
-/// let r = libaki_gsub::execute(&RunnelIoeBuilder::new().build(),
-///     "gsub", ["-e", r"From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>", "-f", "$1, $2"]);
+/// let r = libaki_gsub::execute(
+///     &RunnelIoeBuilder::new().build(),
+///     "gsub",
+///     ["-e", r"From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>", "-f", "$1, $2"]
+/// );
 /// ```
 ///
 /// The `$1` mean 1st capture.
@@ -185,28 +191,92 @@ where
     I: IntoIterator<Item = S>,
     S: AsRef<std::ffi::OsStr>,
 {
-    let env = conf::EnvConf::new();
-    execute_env(sioe, prog_name, args, &env)
+    execute_with_env(sioe, prog_name, args, vec![("", "")])
 }
 
-pub fn execute_env<I, S>(
+/// execute gsub with environments
+///
+/// params:
+///   - sioe: stream in/out/err
+///   - program: program name. etc. "gsub"
+///   - args: parameter arguments.
+///   - env: environments array.
+///
+/// return:
+///   - ok: ()
+///   - err: anyhow
+///
+/// # Examples
+///
+/// ## Example 1: simple replacements
+///
+/// Leaving one character between '`a`' and '`c`',
+/// converts '`a`' and '`c`' on both sides to '`*`'.
+/// At that time, apply <S> and <E> instead of color.
+///
+/// ```rust
+/// use runnel::RunnelIoeBuilder;
+///
+/// let r = libaki_gsub::execute_with_env(&RunnelIoeBuilder::new().build(),
+///     "gsub",
+///     ["-e", "a(.)c", "-f", "*$1*", "--color", "always"],
+///     vec![
+///         ("AKI_GSUB_COLOR_SEQ_ST", "<S>"),
+///         ("AKI_GSUB_COLOR_SEQ_ED","<E>"),
+///     ]
+/// );
+/// ```
+///
+/// The `$1` mean 1st capture.
+///
+/// ## Example 2: extracting email address
+///
+/// This extracts the email address and prints the name and address in commas.
+/// At that time, apply <S> and <E> instead of color.
+///
+/// ```rust
+/// use runnel::RunnelIoeBuilder;
+///
+/// let r = libaki_gsub::execute_with_env(
+///     &RunnelIoeBuilder::new().build(),
+///     "gsub",
+///     [
+///         "-e", r"From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>",
+///         "-f", "$1, $2",
+///         "--color", "always"
+///     ],
+///     vec![
+///         ("AKI_GSUB_COLOR_SEQ_ST", "<S>"),
+///         ("AKI_GSUB_COLOR_SEQ_ED","<E>"),
+///     ]
+/// );
+/// ```
+///
+/// The `$1` mean 1st capture.
+/// The `$2` mean 2nd capture.
+///
+pub fn execute_with_env<I, S, IKV, K, V>(
     sioe: &RunnelIoe,
     prog_name: &str,
     args: I,
-    env: &conf::EnvConf,
+    env: IKV,
 ) -> anyhow::Result<()>
 where
     I: IntoIterator<Item = S>,
     S: AsRef<std::ffi::OsStr>,
+    IKV: IntoIterator<Item = (K, V)>,
+    K: AsRef<std::ffi::OsStr>,
+    V: AsRef<std::ffi::OsStr>,
 {
     let args: Vec<String> = args
         .into_iter()
         .map(|s| s.as_ref().to_string_lossy().into_owned())
         .collect();
     let args_str: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
+    let env_cnf: conf::EnvConf = env.into();
     //
     match conf::parse_cmdopts(prog_name, &args_str) {
-        Ok(conf) => run::run(sioe, &conf, env),
+        Ok(conf) => run::run(sioe, &conf, &env_cnf),
         Err(errs) => {
             if let Some(err) = errs.iter().find(|e| e.is_help() || e.is_version()) {
                 sioe.pg_out().write_line(err.to_string())?;

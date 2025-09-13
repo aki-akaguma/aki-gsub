@@ -97,9 +97,27 @@ impl std::default::Default for EnvConf {
         EnvConf::new()
     }
 }
-impl From<Vec<(&str, &str)>> for EnvConf {
-    fn from(a: Vec<(&str, &str)>) -> Self {
-        Self::from_array(&a)
+
+impl<IKV, K, V> From<IKV> for EnvConf
+where
+    IKV: IntoIterator<Item = (K, V)>,
+    K: AsRef<std::ffi::OsStr>,
+    V: AsRef<std::ffi::OsStr>,
+{
+    fn from(ary: IKV) -> Self {
+        let mut r = Self::new();
+        for a in ary {
+            match a.0.as_ref().to_string_lossy().to_string().as_str() {
+                "AKI_GSUB_COLOR_SEQ_ST" => {
+                    r.color_seq_start = a.1.as_ref().to_string_lossy().to_string();
+                }
+                "AKI_GSUB_COLOR_SEQ_ED" => {
+                    r.color_seq_end = a.1.as_ref().to_string_lossy().to_string();
+                }
+                _ => (),
+            }
+        }
+        r
     }
 }
 

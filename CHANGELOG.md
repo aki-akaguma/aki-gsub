@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `specs`
 * more tests
 * invalid utf8 input test
+* `execute_with_env()`
 
 ### Changed
 * `IntoIterator` compatibility for args in `execute()`
@@ -23,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * bug: replacement is "$$"
 * bug: named capture groups
 * bug: empty match
+
+### Removed
+* `execute_env()`
 
 ## [0.1.38] (2024-06-20)
 ### Added
