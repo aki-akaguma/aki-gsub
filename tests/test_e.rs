@@ -284,11 +284,10 @@ mod test_1_color_e {
     //
     #[test]
     fn test_t1() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "1", "--color", "always"],
-            env,
+            env_1!(),
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -298,11 +297,10 @@ mod test_1_color_e {
     //
     #[test]
     fn test_t2() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "$1", "--color", "always"],
-            env,
+            env_1!(),
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -312,11 +310,10 @@ mod test_1_color_e {
     //
     #[test]
     fn test_t3() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "$0", "--color", "always"],
-            env,
+            env_1!(),
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -326,11 +323,10 @@ mod test_1_color_e {
     //
     #[test]
     fn test_t4() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "$2", "--color", "always"],
-            env,
+            env_1!(),
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -374,11 +370,10 @@ mod test_2_color_e {
     //
     #[test]
     fn test_multi_line() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "1", "--color", "always"],
-            env,
+            env_1!(),
             b"abcabca\noooooo\nabcabca\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -391,11 +386,10 @@ mod test_2_color_e {
     //
     #[test]
     fn test_multi_line_opt_n() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "1", "-n", "--color", "always"],
-            env,
+            env_1!(),
             b"abcabca\noooooo\nabcabca\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");

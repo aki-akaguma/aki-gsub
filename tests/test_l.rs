@@ -8,7 +8,6 @@ mod test_0_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_help() {
@@ -192,7 +191,7 @@ mod test_0_x_options_l {
         let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
         assert_eq!(buff!(sioe, serr), "");
         assert!(buff!(sioe, sout).contains("rustc"));
-        assert_text_match!(buff!(sioe, sout), x_rvi_msg!());
+        assert_text_match!(buff!(sioe, sout).as_str(), x_rvi_msg!());
         assert!(r.is_ok());
     }
     //
@@ -228,7 +227,6 @@ mod test_1_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_invalid_utf8() {
@@ -280,7 +278,6 @@ mod test_1_color_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_t1() {
@@ -335,7 +332,6 @@ mod test_2_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_multi_line() {
@@ -358,7 +354,6 @@ mod test_2_color_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_multi_line() {
@@ -396,7 +391,6 @@ mod test_3_l {
     use libaki_gsub::*;
     use runnel::RunnelIoe;
     use runnel::medium::stringio::{StringIn, StringOut, StringErr};
-    use std::io::Write;
     //
      * can NOT test
     #[test]
@@ -409,7 +403,6 @@ mod test_4_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     //
     // [BUG] thread 'main' panicked at 'begin <= end (4 <= 2) when slicing `$2 :: $0`', /checkout/src/libcore/str/mod.rs:2221:4
@@ -448,7 +441,6 @@ mod test_4_more_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_file_input() {
@@ -474,7 +466,6 @@ mod test_5_replace_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_replace_with_newline() {
@@ -580,7 +571,6 @@ mod test_6_regex_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_overlapping_matches() {
@@ -699,7 +689,6 @@ mod test_6_regex_unsupport_l {
     use libaki_gsub::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_look_ahead() {
