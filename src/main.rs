@@ -2,10 +2,6 @@ use libaki_gsub::execute;
 use runnel::RunnelIoeBuilder;
 
 fn main() {
-    // fast mem operation.
-    #[cfg(not(miri))]
-    memx_cdy::memx_init();
-    //
     let mut env_args: Vec<String> = std::env::args().collect();
     let _program = env_args.remove(0);
     let program = env!("CARGO_PKG_NAME");

@@ -21,7 +21,6 @@ dependencies = [
  "exec-target",
  "flood-tide",
  "indoc",
- "memx-cdy",
  "regex",
  "runnel",
  "rust-version-info-file",
@@ -59,15 +58,6 @@ name = "case"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fd6c0e7b807d60291f42f33f58480c0bfafe28ed08286446f45e463728cf9c1c"
-
-[[package]]
-name = "cpufeatures"
-version = "0.2.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
-dependencies = [
- "libc",
-]
 
 [[package]]
 name = "difference"
@@ -127,25 +117,6 @@ name = "memchr"
 version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79"
-
-[[package]]
-name = "memx"
-version = "0.1.32"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93022fcc0eab2dc9dd134e362592e06f0b3c0aa549ae91d8b3e539e56c2a0687"
-dependencies = [
- "cpufeatures",
-]
-
-[[package]]
-name = "memx-cdy"
-version = "0.1.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "415c8a30336c7690452ab313990ff551d58648119e007f4d4227af932a0adebd"
-dependencies = [
- "libc",
- "memx",
-]
 
 [[package]]
 name = "regex"
