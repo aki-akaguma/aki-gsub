@@ -143,7 +143,7 @@ macro_rules! x_rvi_msg {
         (.|\n)*
         ├── exec-target v\d+\.\d+\.\d+
         └── indoc v\d+\.\d+\.\d+ \(proc-macro\)
-        
+        (.|\n)*
         "#
         )
     };
