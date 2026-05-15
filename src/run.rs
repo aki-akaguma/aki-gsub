@@ -160,7 +160,7 @@ fn make_out_s(
     let color_is_alyways = matches!(conf.opt_color, OptColorWhen::Always);
     let line_len: usize = line_ss.len();
     //
-    routs.sort_unstable_by(|a, b| a.st.cmp(&b.st));
+    routs.sort_unstable_by_key(|a| a.st);
     //
     let mut out_s: String = String::new();
     let mut prev_ed: usize = 0;

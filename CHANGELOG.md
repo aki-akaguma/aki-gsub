@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * update crate: runnel(0.4.2), regex(1.12)
 
 ### Fixed
+* `clippy::unnecessary_sort_by`
 * `x_rvi_msg!()`
 
 ### Removed
