@@ -552,7 +552,7 @@ mod test_5_replace_l {
     //
     #[test]
     fn test_replacement_with_original_string_part() {
-        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "x$1y"], "abcde");
+        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "x${1}y"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "xbyde\n");
         assert!(r.is_ok());

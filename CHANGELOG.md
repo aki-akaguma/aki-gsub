@@ -10,10 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * minimum support rustc 1.68.0 (2c8cc3432 2023-03-06)
 * update crate: flood-tide(0.2.14), flood-tide-gen(0.2.2)
 * update crate: runnel(0.4.2), regex(1.12)
+* Refactor format string parsing to use `regex::Captures::expand`
+* Update tests to use `${n}` syntax for `Captures::expand` compatibility
 
 ### Fixed
 * `clippy::unnecessary_sort_by`
 * `x_rvi_msg!()`
+* Infinite loop bug in manual format parsing logic
 
 ### Removed
 * `memx-cdy`

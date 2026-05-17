@@ -603,7 +603,7 @@ mod test_5_replace_e {
     fn test_replacement_with_original_string_part() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-e", "a(b)c", "-f", "x$1y"],
+            ["-e", "a(b)c", "-f", "x${1}y"],
             b"abcde" as &[u8],
         );
         assert_eq!(oup.stderr, "");

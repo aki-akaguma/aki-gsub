@@ -39,7 +39,7 @@ Environments:
 Examples:
   Leaving one character between 'a' and 'c', converts 'a' and 'c'
   on both sides to '*':
-    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\${1}*"
   result output:
     *b**b*a
 
@@ -74,7 +74,7 @@ converts '`a`' and '`c`' on both sides to '`*`'.
 
 command line:
 ```text
-echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+echo "abcabca" | aki-gsub -e "a(.)c" -f "*\${1}*"
 ```
 
 result output:
@@ -82,7 +82,7 @@ result output:
 *b**b*a
 ```
 
-The `\$1` mean 1st capture.
+The `\${1}` mean 1st capture.
 
 
 ## Example 2: extracting email address
@@ -109,7 +109,7 @@ You can specify multiple formats. See following.
 
 command line:
 ```text
-echo "xxx yyy zzz" | aki-gsub -e "x(x)x" -f "a\$1a" -e "y(y)y" -f "b\$1b"
+echo "xxx yyy zzz" | aki-gsub -e "x(x)x" -f "a\${1}a" -e "y(y)y" -f "b\${1}b"
 ```
 
 result output:
@@ -117,7 +117,7 @@ result output:
 axa byb zzz
 ```
 
-The `\$1` mean 1st capture.
+The `\${1}` mean 1st capture.
 
 # Library example
 
@@ -163,11 +163,11 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// let r = libaki_gsub::execute(
 ///     &RunnelIoeBuilder::new().build(),
 ///     "gsub",
-///     &["-e", "a(.)c", "-f", "*$1*"]
+///     &["-e", "a(.)c", "-f", "*${1}*"]
 /// );
 /// ```
 ///
-/// The `$1` mean 1st capture.
+/// The `${1}` mean 1st capture.
 ///
 /// ## Example 2: extracting email address
 ///
@@ -179,12 +179,12 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// let r = libaki_gsub::execute(
 ///     &RunnelIoeBuilder::new().build(),
 ///     "gsub",
-///     ["-e", r"From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>", "-f", "$1, $2"]
+///     ["-e", r"From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>", "-f", "${1}, ${2}"]
 /// );
 /// ```
 ///
-/// The `$1` mean 1st capture.
-/// The `$2` mean 2nd capture.
+/// The `${1}` mean 1st capture.
+/// The `${2}` mean 2nd capture.
 ///
 pub fn execute<I, S>(sioe: &RunnelIoe, prog_name: &str, args: I) -> anyhow::Result<()>
 where
@@ -219,7 +219,7 @@ where
 ///
 /// let r = libaki_gsub::execute_with_env(&RunnelIoeBuilder::new().build(),
 ///     "gsub",
-///     ["-e", "a(.)c", "-f", "*$1*", "--color", "always"],
+///     ["-e", "a(.)c", "-f", "*${1}*", "--color", "always"],
 ///     vec![
 ///         ("AKI_GSUB_COLOR_SEQ_ST", "<S>"),
 ///         ("AKI_GSUB_COLOR_SEQ_ED","<E>"),
@@ -227,7 +227,7 @@ where
 /// );
 /// ```
 ///
-/// The `$1` mean 1st capture.
+/// The `${1}` mean 1st capture.
 ///
 /// ## Example 2: extracting email address
 ///
@@ -242,7 +242,7 @@ where
 ///     "gsub",
 ///     [
 ///         "-e", r"From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>",
-///         "-f", "$1, $2",
+///         "-f", "${1}, ${2}",
 ///         "--color", "always"
 ///     ],
 ///     vec![
@@ -252,8 +252,8 @@ where
 /// );
 /// ```
 ///
-/// The `$1` mean 1st capture.
-/// The `$2` mean 2nd capture.
+/// The `${1}` mean 1st capture.
+/// The `${2}` mean 2nd capture.
 ///
 pub fn execute_with_env<I, S, IKV, K, V>(
     sioe: &RunnelIoe,

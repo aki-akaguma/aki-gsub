@@ -48,7 +48,7 @@ Environments:
 Examples:
   Leaving one character between 'a' and 'c', converts 'a' and 'c'
   on both sides to '*':
-    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\${1}*"
   result output:
     *b**b*a
 
@@ -83,7 +83,7 @@ converts '`a`' and '`c`' on both sides to '`*`'.
 
 command line:
 ```
-echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+echo "abcabca" | aki-gsub -e "a(.)c" -f "*\${1}*"
 ```
 
 result output:
@@ -91,7 +91,7 @@ result output:
 *b**b*a
 ```
 
-The `\$1` mean 1st capture.
+The `\${1}` mean 1st capture.
 
 
 ### Example 2: extracting email address
@@ -118,7 +118,7 @@ You can specify multiple formats. See following.
 
 command line:
 ```
-echo "xxx yyy zzz" | aki-gsub -e "x(x)x" -f "a\$1a" -e "y(y)y" -f "b\$1b"
+echo "xxx yyy zzz" | aki-gsub -e "x(x)x" -f "a\${1}a" -e "y(y)y" -f "b\${1}b"
 ```
 
 result output:
@@ -126,7 +126,7 @@ result output:
 axa byb zzz
 ```
 
-The `\$1` mean 1st capture.
+The `\${1}` mean 1st capture.
 
 ## Library example
 

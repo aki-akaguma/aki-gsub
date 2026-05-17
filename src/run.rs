@@ -94,53 +94,7 @@ fn make_replaced_out_one(line_offset: usize, caps: &Captures<'_>, fmt: &str) -> 
         }
     };
     //
-    let mut st: usize = 0;
-    let fmt_len = fmt.len();
-    loop {
-        let mut cur = match (fmt[st..]).find('$') {
-            Some(found) => {
-                v_out_s.push_str(&fmt[st..(st + found)]);
-                st + found
-            }
-            None => {
-                v_out_s.push_str(&fmt[st..]);
-                break;
-            }
-        };
-        //
-        cur += 1;
-        if cur >= fmt_len {
-            break;
-        }
-        //
-        let b: u8 = fmt.as_bytes()[cur];
-        if b.is_ascii_digit() {
-            let i: usize = (b - b'0') as usize;
-            if let Some(mat) = caps.get(i) {
-                v_out_s.push_str(mat.as_str());
-            };
-            cur += 1;
-            if cur >= fmt_len {
-                break;
-            }
-        } else if b == b'$' {
-            // case of "$$"
-            v_out_s.push('$');
-        } else if b == b'{' {
-            // named capture group
-            if let Some(found) = (fmt[(cur + 1)..]).find('}') {
-                let name = &fmt[(cur + 1)..(cur + 1 + found)];
-                if let Some(mat) = caps.name(name) {
-                    v_out_s.push_str(mat.as_str());
-                }
-                cur = cur + 1 + found + 1;
-            }
-        } else {
-            cur -= 1;
-        }
-        //
-        st = cur;
-    }
+    caps.expand(fmt, &mut v_out_s);
     //
     ReplacedOut {
         st: line_offset + mat.start(),
