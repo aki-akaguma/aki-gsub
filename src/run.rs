@@ -1,7 +1,7 @@
 use crate::conf::{CmdOptConf, EnvConf, RegexAndFormat};
 use crate::util::err::BrokenPipeError;
 use crate::util::OptColorWhen;
-use regex::{Captures, Regex};
+use regex::Regex;
 use runnel::RunnelIoe;
 
 pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result<()> {
@@ -22,26 +22,49 @@ pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result
     r
 }
 
-struct ReplacedOut {
-    st: usize,
-    ed: usize,
-    out_s: String,
-}
-
 fn do_match_proc(
     sioe: &RunnelIoe,
     conf: &CmdOptConf,
     env: &EnvConf,
     regfmts: &[RegexAndFormat],
 ) -> anyhow::Result<()> {
+    let color_start_s = env.color_seq_start.as_str();
+    let color_end_s = env.color_seq_end.as_str();
+    let color_is_always = matches!(conf.opt_color, OptColorWhen::Always);
+
     for line in sioe.pg_in().lines() {
         let line_s = line?;
-        let line_ss = line_s.as_str();
-        //
-        let routs: Vec<ReplacedOut> = make_replaced_out_vec(regfmts, line_ss)?;
-        if !routs.is_empty() {
-            let out_s = make_out_s(conf, env, line_ss, routs)?;
-            sioe.pg_out().write_line(out_s)?;
+        let mut current_line = line_s.clone();
+        let mut any_matched = false;
+
+        for regfmt in regfmts {
+            let re = &regfmt.regex;
+            let fmt = &regfmt.format;
+
+            if re.is_match(&current_line) {
+                any_matched = true;
+
+                let replaced = re.replace_all(&current_line, |caps: &regex::Captures| {
+                    let mut expanded = String::new();
+                    caps.expand(fmt, &mut expanded);
+                    if color_is_always {
+                        let mut res = String::with_capacity(
+                            color_start_s.len() + expanded.len() + color_end_s.len(),
+                        );
+                        res.push_str(color_start_s);
+                        res.push_str(&expanded);
+                        res.push_str(color_end_s);
+                        res
+                    } else {
+                        expanded
+                    }
+                });
+                current_line = replaced.into_owned();
+            }
+        }
+
+        if any_matched {
+            sioe.pg_out().write_line(current_line)?;
         } else if !conf.flg_quiet {
             sioe.pg_out().write_line(line_s)?;
         }
@@ -49,96 +72,4 @@ fn do_match_proc(
     sioe.pg_out().flush_line()?;
     //
     Ok(())
-}
-
-fn make_replaced_out_vec(
-    regfmts: &[RegexAndFormat],
-    line_ss: &str,
-) -> anyhow::Result<Vec<ReplacedOut>> {
-    let line_len: usize = line_ss.len();
-    let mut routs: Vec<ReplacedOut> = Vec::new();
-    //
-    for regfmt in regfmts {
-        let fmt = &regfmt.format;
-        let re = &regfmt.regex;
-        let mut st: usize = 0;
-        while let Some(caps) = re.captures(&line_ss[st..]) {
-            let mat = match caps.get(0) {
-                Some(mat) => mat,
-                None => break,
-            };
-            let rep_out = make_replaced_out_one(st, &caps, fmt);
-            routs.push(rep_out);
-            if mat.start() == mat.end() {
-                break;
-            }
-            st += mat.end();
-            if st >= line_len {
-                break;
-            }
-        }
-    }
-    Ok(routs)
-}
-
-fn make_replaced_out_one(line_offset: usize, caps: &Captures<'_>, fmt: &str) -> ReplacedOut {
-    let mut v_out_s = String::new();
-    let mat = match caps.get(0) {
-        Some(mat) => mat,
-        None => {
-            return ReplacedOut {
-                st: line_offset,
-                ed: line_offset,
-                out_s: v_out_s,
-            }
-        }
-    };
-    //
-    caps.expand(fmt, &mut v_out_s);
-    //
-    ReplacedOut {
-        st: line_offset + mat.start(),
-        ed: line_offset + mat.end(),
-        out_s: v_out_s,
-    }
-}
-
-fn make_out_s(
-    conf: &CmdOptConf,
-    env: &EnvConf,
-    line_ss: &str,
-    mut routs: Vec<ReplacedOut>,
-) -> anyhow::Result<String> {
-    let color_start_s = env.color_seq_start.as_str();
-    let color_end_s = env.color_seq_end.as_str();
-    let color_is_alyways = matches!(conf.opt_color, OptColorWhen::Always);
-    let line_len: usize = line_ss.len();
-    //
-    routs.sort_unstable_by_key(|a| a.st);
-    //
-    let mut out_s: String = String::new();
-    let mut prev_ed: usize = 0;
-    for rout in &routs {
-        let next_st = rout.st;
-        if prev_ed < next_st {
-            out_s.push_str(&line_ss[prev_ed..next_st]);
-        }
-        if next_st > line_len {
-            prev_ed = rout.ed;
-            break;
-        }
-        if color_is_alyways {
-            out_s.push_str(color_start_s);
-        }
-        out_s.push_str(rout.out_s.as_str());
-        if color_is_alyways {
-            out_s.push_str(color_end_s);
-        }
-        //
-        prev_ed = rout.ed;
-    }
-    if prev_ed < line_len {
-        out_s.push_str(&line_ss[prev_ed..]);
-    }
-    Ok(out_s)
 }
