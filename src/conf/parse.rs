@@ -6,7 +6,6 @@ use flood_tide::{OptParseError, OptParseErrors};
 
 use crate::util::OptColorWhen;
 use crate::util::OptUcXParam;
-use std::str::FromStr;
 
 //----------------------------------------------------------------------
 include!("cmd.help.rs.txt");
@@ -187,7 +186,7 @@ mod test {
         #[rustfmt::skip]
         let nv = flood_tide::NameVal { opt: &opt, val: None, };
         //
-        let r = value_to_string(&nv);
+        let r = value_to_type::<String>(&nv);
         assert_eq!(
             format!("{r:#?}"),
             concat!(
@@ -207,7 +206,7 @@ mod test {
         #[rustfmt::skip]
         let nv = flood_tide::NameVal { opt: &opt, val: None, };
         //
-        let r = value_to_opt_color_when(&nv);
+        let r = value_to_type::<OptColorWhen>(&nv);
         assert_eq!(
             format!("{r:#?}"),
             concat!(
@@ -227,7 +226,7 @@ mod test {
         #[rustfmt::skip]
         let nv = flood_tide::NameVal { opt: &opt, val: None, };
         //
-        let r = value_to_opt_uc_x_param(&nv);
+        let r = value_to_type::<OptUcXParam>(&nv);
         assert_eq!(
             format!("{r:#?}"),
             concat!(
