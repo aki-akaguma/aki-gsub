@@ -1,42 +1,73 @@
 # Code Review for aki-gsub
 
 ## Overview
-`aki-gsub` is a CLI tool designed for text substitution using regular expressions. It is written in Rust and utilizes several modern libraries such as `anyhow` for error handling and `regex` for pattern matching. The project structure is clean, and it includes comprehensive tests and documentation.
+`aki-gsub` is a command-line utility for text substitution using regular expressions. It is written in Rust and utilizes the `regex` crate for pattern matching and `flood-tide` for argument parsing. The project structure is clean and follows standard Rust conventions.
 
-## Technical Analysis
+## Key Findings
 
-### 1. Regex Replacement Logic
-The core logic in `src/run.rs` involves manual parsing of format strings to expand capture groups (e.g., `$1`, `${name}`).
-- **Observation**: The `make_replaced_out_one` function manually iterates through the format string to find and replace capture markers.
-- **Recommendation**: The `regex` crate already provides robust methods like `Regex::replace` or `Regex::replace_all` that handle these expansions natively. Utilizing built-in functionality would reduce complexity and improve compatibility with standard regex expansion rules.
+### 1. Critical Bug: Infinite Loop in Format Parsing
+In `src/run.rs`, the function `make_replaced_out_one` contains a logic error that leads to an infinite loop when an invalid escape sequence is encountered in the format string.
 
-### 2. Multi-Regex Handling
-The current implementation applies multiple regular expressions independently and then merges the results.
-- **Observation**: Matches from all regexes are collected into a `Vec<ReplacedOut>` and then sorted by their start position.
-- **Concern**: This approach may not handle overlapping matches from different regexes correctly. If two regexes match the same or overlapping parts of a string, the current merging logic might produce unexpected output or duplicate segments.
-- **Recommendation**: Consider applying regexes sequentially or using a single regex with alternation if the goal is to handle multiple patterns in one pass.
+**Code at fault:**
+```rust
+        } else {
+            cur -= 1;
+        }
+        //
+        st = cur;
+```
 
-### 3. Error Handling and CLI UX
-- **Observation**: The project uses a custom `BrokenPipeError` trait to handle `EPIPE` errors gracefully.
-- **Benefit**: This is an excellent practice for CLI tools that may be piped into other commands (like `head`), preventing "Broken pipe" error messages from leaking to the user.
-- **Observation**: Argument parsing is handled via `flood-tide`, which supports GNU-style options and provides good help/version messages.
+**Analysis:**
+If a `$` character is followed by a character that is not a digit, `$`, or `{` (e.g., `"$x"`), the code enters the `else` branch, decrements `cur` (pointing it back to the `$`), and sets `st = cur`. In the next iteration, `fmt[st..].find('$')` will find the same `$` at the same position, leading to an infinite loop.
 
-### 4. Code Structure and Maintainability
-- **Observation**: The use of `flood-tide-gen` and `include!` macros for command configuration is an interesting architectural choice.
-- **Concern**: While it keeps the main source files clean, it can make it harder for developers to find the definitions of configuration structs (like `CmdOptConf`) without looking at the generated files.
-- **Observation**: The codebase is well-tested, with unit tests for most utility functions and modules.
+**Recommendation:**
+Advance `st` past the `$` even if the following character is not a recognized escape sequence, or handle the invalid sequence explicitly.
 
-### 5. Performance
-- **Observation**: The tool processes input line-by-line, which is efficient for memory.
-- **Recommendation**: For extremely large files with many matches, the overhead of sorting match results for every line might be noticeable. However, for typical use cases, this is unlikely to be a bottleneck.
+### 2. Limited Capture Group Support
+The manual parsing in `make_replaced_out_one` only supports single-digit capture groups (`$0` through `$9`).
 
-### 6. Safety
-- **Observation**: `CmdOp::from` uses `unsafe { std::mem::transmute(value) }`.
-- **Recommendation**: While this is safe as long as the input `u8` is within the valid range of the enum, using a safe alternative like a `match` statement or a crate that derives conversion logic would be more idiomatic in Rust.
+**Code at fault:**
+```rust
+        let b: u8 = fmt.as_bytes()[cur];
+        if b.is_ascii_digit() {
+            let i: usize = (b - b'0') as usize;
+            if let Some(mat) = caps.get(i) {
+                v_out_s.push_str(mat.as_str());
+            };
+            cur += 1;
+```
+
+**Recommendation:**
+Support multi-digit capture groups (e.g., `$10`, `$11`) by parsing all consecutive digits following the `$`.
+
+### 3. Handling of Overlapping Matches
+When multiple regexes are provided (e.g., `-e "ab" -f "x" -e "bc" -f "y"`), the tool matches all of them against the original line and concatenates the replacements.
+
+**Analysis:**
+For the input `"abc"`, the current implementation produces `"xy"`. While this is a deterministic behavior, it may be unexpected for users who expect sequential processing (where the second regex operates on the result of the first) or for the first match to consume the input.
+
+**Recommendation:**
+Document this behavior clearly in the README or consider implementing a sequential processing mode.
+
+### 4. Code Refactoring: Use `Captures::expand`
+The manual format parsing logic in `make_replaced_out_one` can be simplified and made more robust by using the `regex` crate's built-in expansion capabilities.
+
+**Recommendation:**
+Consider using `caps.expand(fmt, &mut v_out_s)`. This would automatically handle multi-digit capture groups, named captures, and literal `$$` escaping, aligning the tool's behavior with standard regex replacement expectations.
+
+## Architecture and Design
+- **IO Abstraction**: The use of `runnel::RunnelIoe` for abstracting standard input, output, and error is excellent. it makes the core logic highly testable.
+- **Error Handling**: The integration of `anyhow` and the custom `BrokenPipeError` trait shows good attention to CLI usability, especially for handling pipe failures gracefully.
+- **Configuration**: The separation of command-line options (`CmdOptConf`) and environment variables (`EnvConf`) is well-implemented.
+
+## Style and Conventions
+- The code follows standard Rust naming conventions and formatting.
+- Documentation comments are comprehensive and include helpful examples.
+- The use of `include!` for generated code is consistent across the project, though modern alternatives like proc-macros or `OUT_DIR` builds are more common in the ecosystem.
 
 ## Conclusion
-The `aki-gsub` project is a solid implementation of a text processing utility. It demonstrates a good understanding of Rust's ecosystem and CLI design patterns. Refactoring the manual regex expansion logic and reviewing the multi-regex merging strategy would further improve its robustness.
+`aki-gsub` is a well-structured tool with clear intent. Addressing the infinite loop bug and improving the capture group parsing (ideally by leveraging the `regex` crate's expansion features) will significantly enhance its reliability and feature completeness.
 
 ---
-Review Date: 2026-05-16
+Review Date: 2026-05-17
 Reviewer: Gemini CLI Agent
