@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Conducted a comprehensive code review (saved to `docs/review.2.md`)
 
 ### Changed
+* Refactored `EnvConf` to reduce code duplication and improve maintainability
 * Refactored regex substitution logic to a sequential application strategy (similar to `sed`)
 * Update design documentation (`specs/2.design.md`) to reflect the sequential substitution strategy
 * minimum support rustc 1.68.0 (2c8cc3432 2023-03-06)
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update tests to use `${n}` syntax for `Captures::expand` compatibility
 
 ### Fixed
+* Fix help message formatting to match test expectations
 * `clippy::unnecessary_sort_by`
 * `x_rvi_msg!()`
 * Infinite loop bug in manual format parsing logic
@@ -367,3 +369,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.18]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.17..v0.1.18
 [0.1.17]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.16..v0.1.17
 [0.1.16]: https://github.com/aki-akaguma/aki-gsub/releases/tag/v0.1.16
+releases/tag/v0.1.16

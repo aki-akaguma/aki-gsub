@@ -44,6 +44,9 @@ pub struct RegexAndFormat {
 static COLOR_START: &str = "\u{1B}[1;31m";
 static COLOR_END: &str = "\u{1B}[0m";
 
+pub const ENV_COLOR_SEQ_ST: &str = "AKI_GSUB_COLOR_SEQ_ST";
+pub const ENV_COLOR_SEQ_ED: &str = "AKI_GSUB_COLOR_SEQ_ED";
+
 #[derive(Debug)]
 pub struct EnvConf {
     pub color_seq_start: String,
@@ -51,40 +54,35 @@ pub struct EnvConf {
 }
 impl EnvConf {
     pub fn new() -> Self {
-        //
-        let a_color_seq_start = match env::var("AKI_GSUB_COLOR_SEQ_ST") {
-            Ok(v) => v,
-            Err(_) => String::from(COLOR_START),
-        };
-        let a_color_seq_end = match env::var("AKI_GSUB_COLOR_SEQ_ED") {
-            Ok(v) => v,
-            Err(_) => String::from(COLOR_END),
-        };
-        //
-        Self {
-            color_seq_start: a_color_seq_start,
-            color_seq_end: a_color_seq_end,
-        }
-    }
-    pub fn from_array(ary: &[(&str, &str)]) -> Self {
-        let mut r = Self::new();
-        for a in ary {
-            match a.0 {
-                "AKI_GSUB_COLOR_SEQ_ST" => {
-                    r.color_seq_start = a.1.to_string();
-                }
-                "AKI_GSUB_COLOR_SEQ_ED" => {
-                    r.color_seq_end = a.1.to_string();
-                }
-                _ => (),
-            }
+        let mut r = Self::default();
+        for (k, v) in env::vars() {
+            r.apply_kv(k, v);
         }
         r
+    }
+    fn apply_kv<K, V>(&mut self, key: K, val: V)
+    where
+        K: AsRef<std::ffi::OsStr>,
+        V: AsRef<std::ffi::OsStr>,
+    {
+        let key_s = key.as_ref().to_string_lossy();
+        match key_s.as_ref() {
+            ENV_COLOR_SEQ_ST => {
+                self.color_seq_start = val.as_ref().to_string_lossy().into_owned();
+            }
+            ENV_COLOR_SEQ_ED => {
+                self.color_seq_end = val.as_ref().to_string_lossy().into_owned();
+            }
+            _ => (),
+        }
     }
 }
 impl std::default::Default for EnvConf {
     fn default() -> EnvConf {
-        EnvConf::new()
+        EnvConf {
+            color_seq_start: String::from(COLOR_START),
+            color_seq_end: String::from(COLOR_END),
+        }
     }
 }
 
@@ -95,17 +93,14 @@ where
     V: AsRef<std::ffi::OsStr>,
 {
     fn from(ary: IKV) -> Self {
+        // Start with empty strings to allow explicit overrides,
+        // but Default should still provide ANSI sequences.
+        // Actually, the previous implementation of execute_with_env
+        // was calling EnvConf::new() then overriding.
+        // Let's match that behavior.
         let mut r = Self::new();
         for a in ary {
-            match a.0.as_ref().to_string_lossy().to_string().as_str() {
-                "AKI_GSUB_COLOR_SEQ_ST" => {
-                    r.color_seq_start = a.1.as_ref().to_string_lossy().to_string();
-                }
-                "AKI_GSUB_COLOR_SEQ_ED" => {
-                    r.color_seq_end = a.1.as_ref().to_string_lossy().to_string();
-                }
-                _ => (),
-            }
+            r.apply_kv(a.0, a.1);
         }
         r
     }
