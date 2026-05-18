@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+## [0.2.1] (2026-05-18)
 ### Added
 * Standardize capture group references to `${n}` syntax (e.g., `${1}`) in documentation and tests
 * Conducted a comprehensive code review (saved to `docs/review.2.md`)
@@ -28,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * `memx-cdy`
-
 
 ## [0.2.0] (2025-09-15)
 ### Added
@@ -344,7 +346,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 0.1.0 (2017-12-12)
 * first commit
 
-[Unreleased]: https://github.com/aki-akaguma/aki-gsub/compare/v0.2.0..HEAD
+[Unreleased]: https://github.com/aki-akaguma/aki-gsub/compare/v0.2.1..HEAD
+[0.2.1]: https://github.com/aki-akaguma/aki-gsub/compare/v0.2.0..v0.2.1
 [0.2.0]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.38..v0.2.0
 [0.1.38]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.37..v0.1.38
 [0.1.37]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.36..v0.1.37
