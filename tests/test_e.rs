@@ -245,7 +245,7 @@ mod test_1_e {
     fn test_t2() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-e", "a(b)c", "-f", "$1"],
+            ["-e", "a(b)c", "-f", "${1}"],
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -257,7 +257,7 @@ mod test_1_e {
     fn test_t3() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-e", "a(b)c", "-f", "$0"],
+            ["-e", "a(b)c", "-f", "${0}"],
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -269,7 +269,7 @@ mod test_1_e {
     fn test_t4() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-e", "a(b)c", "-f", "$2"],
+            ["-e", "a(b)c", "-f", "${2}"],
             b"abcabca" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -299,7 +299,7 @@ mod test_1_color_e {
     fn test_t2() {
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            ["-e", "a(b)c", "-f", "$1", "--color", "always"],
+            ["-e", "a(b)c", "-f", "${1}", "--color", "always"],
             env_1!(),
             b"abcabca" as &[u8],
         );
@@ -312,7 +312,7 @@ mod test_1_color_e {
     fn test_t3() {
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            ["-e", "a(b)c", "-f", "$0", "--color", "always"],
+            ["-e", "a(b)c", "-f", "${0}", "--color", "always"],
             env_1!(),
             b"abcabca" as &[u8],
         );
@@ -325,7 +325,7 @@ mod test_1_color_e {
     fn test_t4() {
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
-            ["-e", "a(b)c", "-f", "$2", "--color", "always"],
+            ["-e", "a(b)c", "-f", "${2}", "--color", "always"],
             env_1!(),
             b"abcabca" as &[u8],
         );
@@ -425,8 +425,8 @@ mod test_4_e {
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
 
     //
-    // [BUG] thread 'main' panicked at 'begin <= end (4 <= 2) when slicing `$2 :: $0`', /checkout/src/libcore/str/mod.rs:2221:4
-    // echo "001cea1eef55.softphone.blizoo.bg" | rust-gsub -e "(.*\\.){0,1}([A-Za-z0-9][A-Za-z0-9\\-]{1,61}(\\.[A-Za-z0-9]{2,}){0,1}(\\.[A-Za-z]{2,}){0,1}\\.[A-Za-z]{2,5})$" -f "\$2 :: \$0"
+    // [BUG] thread 'main' panicked at 'begin <= end (4 <= 2) when slicing `${2} :: ${0}`', /checkout/src/libcore/str/mod.rs:2221:4
+    // echo "001cea1eef55.softphone.blizoo.bg" | rust-gsub -e "(.*\\.){0,1}([A-Za-z0-9][A-Za-z0-9\\-]{1,61}(\\.[A-Za-z0-9]{2,}){0,1}(\\.[A-Za-z]{2,}){0,1}\\.[A-Za-z]{2,5})$" -f "\${2} :: \${0}"
     //
     #[test]
     fn test_fix_bug_1() {
@@ -435,7 +435,7 @@ mod test_4_e {
                 "-e",
                 "(.*\\.){0,1}([A-Za-z0-9][A-Za-z0-9\\-]{1,61}(\\.[A-Za-z0-9]{2,}){0,1}(\\.[A-Za-z]{2,}){0,1}\\.[A-Za-z]{2,5})$",
                 "-f",
-                "$2 :: $0",
+                "${2} :: ${0}",
             ],
             b"001cea1eef55.softphone.blizoo.bg\n" as &[u8]);
         assert_eq!(oup.stderr, "");
@@ -579,7 +579,7 @@ mod test_5_replace_e {
     fn test_complex_regex() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-e", "([a-z]+)-([0-9]+)", "-f", "$2-$1"],
+            ["-e", "([a-z]+)-([0-9]+)", "-f", "${2}-${1}"],
             b"abc-123 xyz-456" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -591,7 +591,7 @@ mod test_5_replace_e {
     fn test_backreference() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-e", "(a)b(c)", "-f", "$2$1"],
+            ["-e", "(a)b(c)", "-f", "${2}${1}"],
             b"abc" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -615,7 +615,7 @@ mod test_5_replace_e {
     fn test_multiple_capture_groups_replacement() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-e", "(a)(b)(c)", "-f", "$3$2$1"],
+            ["-e", "(a)(b)(c)", "-f", "${3}${2}${1}"],
             b"abc" as &[u8],
         );
         assert_eq!(oup.stderr, "");

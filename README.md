@@ -39,7 +39,7 @@ Options:
 Option Parameters:
   <when>    'always', 'never', or 'auto'
   <exp>     regular expression can has capture groups
-  <fmt>     format can has capture group: $0, $1, $2, ...
+  <fmt>     format can has capture group: ${0}, ${1}, ${2}, ...
 
 Environments:
   AKI_GSUB_COLOR_SEQ_ST     color start sequence specified by ansi
@@ -100,7 +100,7 @@ This extracts the email address and prints the name and address in commas.
 
 command line:
 ```
-echo "From:Red bear<aki.akaguma@example.com>" | aki-gsub -e "From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>" -f "\$1, \$2"
+echo "From:Red bear<aki.akaguma@example.com>" | aki-gsub -e "From: ?(.*)<([\w\d_.-]+@[\w\d_-]+\.[\w\d._-]+)>" -f "\${1}, \${2}"
 ```
 
 result output:
@@ -108,8 +108,8 @@ result output:
 Red bear, aki.akaguma@example.com
 ```
 
-The `\$1` mean 1st capture.
-The `\$2` mean 2nd capture.
+The `\${1}` mean 1st capture.
+The `\${2}` mean 2nd capture.
 
 
 ### Example 3: multiple format

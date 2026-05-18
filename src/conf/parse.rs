@@ -17,7 +17,7 @@ substitude text command, replace via regex.
 const PARAMS_TEXT: &str = r#"Option Parameters:
   <when>    'always', 'never', or 'auto'
   <exp>     regular expression can has capture groups
-  <fmt>     format can has capture group: $0, $1, $2, ...
+  <fmt>     format can has capture group: ${0}, ${1}, ${2}, ...
 "#;
 //const ARGUMENTS_TEXT: &str = r#""#;
 const ENV_TEXT: &str = r#"Environments:
@@ -27,7 +27,7 @@ const ENV_TEXT: &str = r#"Environments:
 const EXAMPLES_TEXT: &str = r#"Examples:
   Leaving one character between 'a' and 'c', converts 'a' and 'c'
   on both sides to '*':
-    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\$1*"
+    echo "abcabca" | aki-gsub -e "a(.)c" -f "*\${1}*"
   result output:
     *b**b*a
 

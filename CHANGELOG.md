@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+* Standardize capture group references to `${n}` syntax (e.g., `${1}`) in documentation and tests
 * Conducted a comprehensive code review (saved to `docs/review.2.md`)
 
 ### Changed

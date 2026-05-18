@@ -251,7 +251,7 @@ mod test_1_l {
     //
     #[test]
     fn test_t2() {
-        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "$1"], "abcabca");
+        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "${1}"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "bba\n");
         assert!(r.is_ok());
@@ -259,7 +259,7 @@ mod test_1_l {
     //
     #[test]
     fn test_t3() {
-        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "$0"], "abcabca");
+        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "${0}"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "abcabca\n");
         assert!(r.is_ok());
@@ -267,7 +267,7 @@ mod test_1_l {
     //
     #[test]
     fn test_t4() {
-        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "$2"], "abcabca");
+        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "${2}"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "a\n");
         assert!(r.is_ok());
@@ -295,7 +295,7 @@ mod test_1_color_l {
     fn test_t2() {
         let (r, sioe) = do_execute!(
             env_1!(),
-            ["-e", "a(b)c", "-f", "$1", "--color", "always"],
+            ["-e", "a(b)c", "-f", "${1}", "--color", "always"],
             "abcabca"
         );
         assert_eq!(buff!(sioe, serr), "");
@@ -307,7 +307,7 @@ mod test_1_color_l {
     fn test_t3() {
         let (r, sioe) = do_execute!(
             env_1!(),
-            ["-e", "a(b)c", "-f", "$0", "--color", "always"],
+            ["-e", "a(b)c", "-f", "${0}", "--color", "always"],
             "abcabca"
         );
         assert_eq!(buff!(sioe, serr), "");
@@ -319,7 +319,7 @@ mod test_1_color_l {
     fn test_t4() {
         let (r, sioe) = do_execute!(
             env_1!(),
-            ["-e", "a(b)c", "-f", "$2", "--color", "always"],
+            ["-e", "a(b)c", "-f", "${2}", "--color", "always"],
             "abcabca"
         );
         assert_eq!(buff!(sioe, serr), "");
@@ -405,8 +405,8 @@ mod test_4_l {
     use runnel::RunnelIoe;
     //
     //
-    // [BUG] thread 'main' panicked at 'begin <= end (4 <= 2) when slicing `$2 :: $0`', /checkout/src/libcore/str/mod.rs:2221:4
-    // echo "001cea1eef55.softphone.blizoo.bg" | rust-gsub -e "(.*\\.){0,1}([A-Za-z0-9][A-Za-z0-9\\-]{1,61}(\\.[A-Za-z0-9]{2,}){0,1}(\\.[A-Za-z]{2,}){0,1}\\.[A-Za-z]{2,5})$" -f "\$2 :: \$0"
+    // [BUG] thread 'main' panicked at 'begin <= end (4 <= 2) when slicing `${2} :: ${0}`', /checkout/src/libcore/str/mod.rs:2221:4
+    // echo "001cea1eef55.softphone.blizoo.bg" | rust-gsub -e "(.*\\.){0,1}([A-Za-z0-9][A-Za-z0-9\\-]{1,61}(\\.[A-Za-z0-9]{2,}){0,1}(\\.[A-Za-z]{2,}){0,1}\\.[A-Za-z]{2,5})$" -f "\${2} :: \${0}"
     //
     #[test]
     fn test_fix_bug_1() {
@@ -414,7 +414,7 @@ mod test_4_l {
                 "-e",
                 "(.*\\.){0,1}([A-Za-z0-9][A-Za-z0-9\\-]{1,61}(\\.[A-Za-z0-9]{2,}){0,1}(\\.[A-Za-z]{2,}){0,1}\\.[A-Za-z]{2,5})$",
                 "-f",
-                "$2 :: $0",
+                "${2} :: ${0}",
             ],
             "001cea1eef55.softphone.blizoo.bg\n");
         assert_eq!(buff!(sioe, serr), "");
@@ -534,7 +534,7 @@ mod test_5_replace_l {
     #[test]
     fn test_complex_regex() {
         let (r, sioe) = do_execute!(
-            ["-e", "([a-z]+)-([0-9]+)", "-f", "$2-$1"],
+            ["-e", "([a-z]+)-([0-9]+)", "-f", "${2}-${1}"],
             "abc-123 xyz-456"
         );
         assert_eq!(buff!(sioe, serr), "");
@@ -544,7 +544,7 @@ mod test_5_replace_l {
     //
     #[test]
     fn test_backreference() {
-        let (r, sioe) = do_execute!(["-e", "(a)b(c)", "-f", "$2$1"], "abc");
+        let (r, sioe) = do_execute!(["-e", "(a)b(c)", "-f", "${2}${1}"], "abc");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ca\n");
         assert!(r.is_ok());
@@ -560,7 +560,7 @@ mod test_5_replace_l {
     //
     #[test]
     fn test_multiple_capture_groups_replacement() {
-        let (r, sioe) = do_execute!(["-e", "(a)(b)(c)", "-f", "$3$2$1"], "abc");
+        let (r, sioe) = do_execute!(["-e", "(a)(b)(c)", "-f", "${3}${2}${1}"], "abc");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "cba\n");
         assert!(r.is_ok());
