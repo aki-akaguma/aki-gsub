@@ -258,6 +258,14 @@ mod test_1_l {
     }
     //
     #[test]
+    fn test_t2n() {
+        let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "$1"], "abcabca");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "bba\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
     fn test_t3() {
         let (r, sioe) = do_execute!(["-e", "a(b)c", "-f", "${0}"], "abcabca");
         assert_eq!(buff!(sioe, serr), "");

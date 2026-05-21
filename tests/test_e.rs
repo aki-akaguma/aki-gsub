@@ -254,6 +254,18 @@ mod test_1_e {
     }
     //
     #[test]
+    fn test_t2n() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["-e", "a(b)c", "-f", "$1"],
+            b"abcabca" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "bba\n");
+        assert!(oup.status.success());
+    }
+    //
+    #[test]
     fn test_t3() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
