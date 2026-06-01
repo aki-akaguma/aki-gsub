@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Reorganized and renamed past code review documents in `docs/reviews/`
 * Documented the sequential replacement behavior in README and module documentation
+* Optimized regex substitution logic by removing redundant `is_match` calls
 
 
 ## [0.2.1] (2026-05-18)

@@ -41,25 +41,25 @@ fn do_match_proc(
             let re = &regfmt.regex;
             let fmt = &regfmt.format;
 
-            if re.is_match(&current_line) {
-                any_matched = true;
+            let replaced = re.replace_all(&current_line, |caps: &regex::Captures| {
+                let mut expanded = String::new();
+                caps.expand(fmt, &mut expanded);
+                if color_is_always {
+                    let mut res = String::with_capacity(
+                        color_start_s.len() + expanded.len() + color_end_s.len(),
+                    );
+                    res.push_str(color_start_s);
+                    res.push_str(&expanded);
+                    res.push_str(color_end_s);
+                    res
+                } else {
+                    expanded
+                }
+            });
 
-                let replaced = re.replace_all(&current_line, |caps: &regex::Captures| {
-                    let mut expanded = String::new();
-                    caps.expand(fmt, &mut expanded);
-                    if color_is_always {
-                        let mut res = String::with_capacity(
-                            color_start_s.len() + expanded.len() + color_end_s.len(),
-                        );
-                        res.push_str(color_start_s);
-                        res.push_str(&expanded);
-                        res.push_str(color_end_s);
-                        res
-                    } else {
-                        expanded
-                    }
-                });
-                current_line = replaced.into_owned();
+            if let std::borrow::Cow::Owned(s) = replaced {
+                any_matched = true;
+                current_line = s;
             }
         }
 
