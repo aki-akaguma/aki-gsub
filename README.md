@@ -116,6 +116,9 @@ The `\${2}` mean 2nd capture.
 
 You can specify multiple formats. See following.
 
+**Note:** Multiple expressions are applied **sequentially**.
+The output of the first replacement becomes the input for the next.
+
 command line:
 ```
 echo "xxx yyy zzz" | aki-gsub -e "x(x)x" -f "a\${1}a" -e "y(y)y" -f "b\${1}b"
@@ -127,6 +130,8 @@ axa byb zzz
 ```
 
 The `\${1}` mean 1st capture.
+In this example, if you use `echo "abc" | aki-gsub -e "a" -f "b" -e "b" -f "c"`,
+the result will be `ccc` because replacements are applied one after another.
 
 ## Library example
 
