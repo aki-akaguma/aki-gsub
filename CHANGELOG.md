@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Documented the sequential replacement behavior in README and module documentation
 * Optimized regex substitution logic by removing redundant `is_match` calls
 * Refactored coloring logic into a reusable `colorize` utility function
+* Optimized memory allocation in `do_match_proc` by reusing a line buffer
 
 
 ## [0.2.1] (2026-05-18)

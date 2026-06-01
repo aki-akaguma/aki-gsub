@@ -32,9 +32,11 @@ fn do_match_proc(
     let color_end_s = env.color_seq_end.as_str();
     let color_is_always = matches!(conf.opt_color, OptColorWhen::Always);
 
-    for line in sioe.pg_in().lines() {
-        let line_s = line?;
-        let mut current_line = line_s.clone();
+    let mut buf = String::with_capacity(1024);
+    let mut pg_in = sioe.pg_in().lock_bufread();
+    while pg_in.read_line(&mut buf)? > 0 {
+        let line_s = buf.trim_end_matches(['\n', '\r']);
+        let mut current_line = line_s.to_string();
         let mut any_matched = false;
 
         for regfmt in regfmts {
@@ -60,8 +62,9 @@ fn do_match_proc(
         if any_matched {
             sioe.pg_out().write_line(current_line)?;
         } else if !conf.flg_quiet {
-            sioe.pg_out().write_line(line_s)?;
+            sioe.pg_out().write_line(line_s.to_string())?;
         }
+        buf.clear();
     }
     sioe.pg_out().flush_line()?;
     //
