@@ -45,13 +45,7 @@ fn do_match_proc(
                 let mut expanded = String::new();
                 caps.expand(fmt, &mut expanded);
                 if color_is_always {
-                    let mut res = String::with_capacity(
-                        color_start_s.len() + expanded.len() + color_end_s.len(),
-                    );
-                    res.push_str(color_start_s);
-                    res.push_str(&expanded);
-                    res.push_str(color_end_s);
-                    res
+                    crate::util::colorize(&expanded, color_start_s, color_end_s)
                 } else {
                     expanded
                 }
