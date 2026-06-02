@@ -2,358 +2,377 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### Added
-* Conducted a comprehensive code review (saved to `docs/reviews/2026-06-01_code_review.3.md`)
+- Tests for `$n` capture group syntax compatibility (e.g., `-f "$1"`)
+- Conducted a comprehensive code review (saved to `docs/reviews/2026-06-01_code_review.3.md`)
 
 ### Changed
-* Reorganized and renamed past code review documents in `docs/reviews/`
-* Documented the sequential replacement behavior in README and module documentation
-* Optimized regex substitution logic by removing redundant `is_match` calls
-* Refactored coloring logic into a reusable `colorize` utility function
-* Optimized memory allocation in `do_match_proc` by reusing a line buffer
+- Reorganized and renamed past code review documents in `docs/reviews/`
+- Documented the sequential replacement behavior in README and module documentation
+- Optimized regex substitution logic by removing redundant `is_match` calls
+- Refactored coloring logic into a reusable `colorize` utility function
+- Optimized memory allocation in `do_match_proc` by reusing a line buffer
 
+## [0.2.1] - 2026-05-18
 
-## [0.2.1] (2026-05-18)
 ### Added
-* Standardize capture group references to `${n}` syntax (e.g., `${1}`) in documentation and tests
-* Conducted a comprehensive code review (saved to `docs/review.2.md`)
+- Standardize capture group references to `${n}` syntax (e.g., `${1}`) in documentation and tests
+- Conducted a comprehensive code review (saved to `docs/review.2.md`)
 
 ### Changed
-* Refactored `EnvConf` to reduce code duplication and improve maintainability
-* Refactored regex substitution logic to a sequential application strategy (similar to `sed`)
-* Update design documentation (`specs/2.design.md`) to reflect the sequential substitution strategy
-* minimum support rustc 1.68.0 (2c8cc3432 2023-03-06)
-* update crate: flood-tide(0.2.14), flood-tide-gen(0.2.2)
-* update crate: runnel(0.4.2), regex(1.12)
-* Refactor format string parsing to use `regex::Captures::expand`
-* Update tests to use `${n}` syntax for `Captures::expand` compatibility
+- Refactored `EnvConf` to reduce code duplication and improve maintainability
+- Refactored regex substitution logic to a sequential application strategy (similar to `sed`)
+- Updated design documentation (`specs/2.design.md`) to reflect the sequential substitution strategy
+- Minimum supported rustc 1.68.0 (2c8cc3432 2023-03-06)
+- Updated crates: flood-tide (0.2.14), flood-tide-gen (0.2.2)
+- Updated crates: runnel (0.4.2), regex (1.12)
+- Refactored format string parsing to use `regex::Captures::expand`
+- Updated tests to use `${n}` syntax for `Captures::expand` compatibility
 
 ### Fixed
-* Fix help message formatting to match test expectations
-* `clippy::unnecessary_sort_by`
-* `x_rvi_msg!()`
-* Infinite loop bug in manual format parsing logic
+- Fixed help message formatting to match test expectations
+- Clippy: `unnecessary_sort_by`
+- `x_rvi_msg!()`
+- Fixed infinite loop bug in manual format parsing logic
 
 ### Removed
-* `memx-cdy`
+- `memx-cdy`
 
-## [0.2.0] (2025-09-15)
+## [0.2.0] - 2025-09-15
+
 ### Added
-* `specs`
-* more tests
-* invalid utf8 input test
-* `execute_with_env()`
+- `specs` directory
+- More tests, including invalid UTF-8 input test
+- `execute_with_env()`
 
 ### Changed
-* `IntoIterator` compatibility for args in `execute()`
-* updated: runnel(0.4.0)
-* updated: rust-version-info-file(0.2.0)
-* updated: regex(1.11)
-* refactored `lib.rs`
+- `IntoIterator` compatibility for args in `execute()`
+- Updated crates: runnel (0.4.0), rust-version-info-file (0.2.0), regex (1.11)
+- Refactored `lib.rs`
 
 ### Fixed
-* minimum support version in doc
-* bug: replacement is "$$"
-* bug: named capture groups
-* bug: empty match
+- Fixed minimum support version in documentation
+- Bug: replacement is "$$"
+- Bug: named capture groups
+- Bug: empty match
 
 ### Removed
-* `execute_env()`
-* `base_dir=` of `-X` options
+- `execute_env()`
+- `base_dir=` of `-X` options
 
-## [0.1.38] (2024-06-20)
+## [0.1.38] - 2024-06-20
+
 ### Added
-* `.github/workflows/test-ubuntu.yml`
-* `.github/workflows/test-macos.yml`
-* `.github/workflows/test-windows.yml`
-* test status badges into `README.tpl`
-* miri supports on tests
-* `tarpaulin` supports into `Makefile`
-* `X` option test to tests
-* some tests
+- GitHub Actions workflows: `.github/workflows/test-{ubuntu,macos,windows}.yml`
+- Test status badges in `README.tpl`
+- Miri support in tests
+- Tarpaulin support in `Makefile`
+- `-X` option tests and other various tests
 
 ### Changed
-* rename: `config` to `config.toml`
-* remove: `cfg(has_not_matches)`
-* refactored `Makefile`
-* update depends: flood-tide(0.2.11), flood-tide-gen(0.1.22)
-* update depends: memx-cdy(0.1.13), runnel(0.3.19)
-* update depends: exec-taget(0.2.8), indoc(2.0.0), rust-version-info-file(0.1.10)
+- Renamed `config` to `config.toml`
+- Removed `cfg(has_not_matches)`
+- Refactored `Makefile`
+- Updated dependencies: flood-tide (0.2.11), flood-tide-gen (0.1.22), memx-cdy (0.1.13), runnel (0.3.19), exec-target (0.2.8), indoc (2.0.0), rust-version-info-file (0.1.10)
+
+### Fixed
+- Bug: `test_x_option_rvi()`
+- License files: `LICENSE-APACHE`, `LICENSE-MIT`
+- Clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`, `uninlined_format_args`, `borrow_deref_ref`, `unused_imports`, `derivable_impls`
+- Updated rust-version from "1.56.0" to "1.65.0"
 
 ### Removed
-* `OptColorWhenParseError::description()` for `depricated`
-* `OptUcXParamParseError::description()` for `depricated`
-* `COPYING`
+- `OptColorWhenParseError::description()` (deprecated)
+- `OptUcXParamParseError::description()` (deprecated)
+- `COPYING`
+
+## [0.1.37] - 2023-01-11
 
 ### Fixed
-* bug: `test_x_option_rvi()`
-* `LICENSE-APACHE`, `LICENSE-MIT`
-* license files
-* clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`
-* clippy: `uninlined_format_args`, `borrow_deref_ref`, `unused_imports`
-* clippy: `derivable_impls`
-* rust-version: "1.56.0" to "1.65.0"
+- Fixed HTTP links in `CHANGELOG.md`
 
-## [0.1.37] (2023-01-11)
-### Fixed
-* http links on `CHANGELOG.md`
+## [0.1.36] - 2023-01-11 [YANKED]
 
-## [0.1.36] (2023-01-11) YANKED
 ### Added
-* badges into `README.tpl`
-* rust-version = "1.56.0" into Cargo.toml
+- Badges in `README.tpl`
+- `rust-version = "1.56.0"` to `Cargo.toml`
 
 ### Changed
-* reformat `CHANGELOG.md`
-* update depends: anyhow(1.0.68)
-* update depends: flood-tide(0.2.8), flood-tide-gen(0.1.19)
-* update depends: memx-cdy(0.1.10), runnel(0.3.15)
-* update depends: regex(1.7.1)
+- Reformatted `CHANGELOG.md`
+- Updated dependencies: anyhow (1.0.68), flood-tide (0.2.8), flood-tide-gen (0.1.19), memx-cdy (0.1.10), runnel (0.3.15), regex (1.7.1)
 
 ### Fixed
-* clippy: you are deriving `PartialEq` and can implement `Eq`
-* clippy: uninlined_format_args, manual_is_ascii_check
+- Clippy: you are deriving `PartialEq` and can implement `Eq`
+- Clippy: `uninlined_format_args`, `manual_is_ascii_check`
 
-## [0.1.35] (2022-06-18)
+## [0.1.35] - 2022-06-18
+
 ### Changed
-* changes to edition 2021
-* update depends: flood-tide(0.2.5)
-* update depends: memx(0.1.21), memx-cdy(0.1.8), runnel(0.3.11)
-* update depends: exec-target(v0.2.6), flood-tide-gen(0.1.16)
-* update depends: rust-version-info-file(v0.1.6)
-* update depends: semver(1.0.10)
+- Changed to Edition 2021
+- Updated dependencies: flood-tide (0.2.5), memx (0.1.21), memx-cdy (0.1.8), runnel (0.3.11), exec-target (0.2.6), flood-tide-gen (0.1.16), rust-version-info-file (0.1.6), semver (1.0.10)
 
-## [0.1.34] (2022-05-22)
+## [0.1.34] - 2022-05-22
+
 ### Changed
-* update depends: runnel(0.3.10)
-* update depends: anyhow(1.0.57), libc(0.2.126), regex(1.5.6)
-* update depends: exec-target(v0.2.5), rust-version-info-file(v0.1.5)
+- Updated dependencies: runnel (0.3.10), anyhow (1.0.57), libc (0.2.126), regex (1.5.6), exec-target (0.2.5), rust-version-info-file (0.1.5)
 
-## [0.1.33] (2021-11-15)
+## [0.1.33] - 2021-11-15
+
 ### Added
-* more documents
+- More documentation
 
 ### Changed
-* minimum support rustc 1.47.0 (18bf6b4f0 2020-10-07)
-* update depends: flood-tide(0.2.4), memx(0.1.18), memx-cdy(0.1.7), runnel(0.3.9)
-* update depends: anyhow(1.0.45), libc(0.2.107)
-* update depends: exec-target(v0.2.4), flood-tide-gen(0.1.15), rust-version-info-file(v0.1.3)
+- Minimum supported rustc 1.47.0 (18bf6b4f0 2020-10-07)
+- Updated dependencies: flood-tide (0.2.4), memx (0.1.18), memx-cdy (0.1.7), runnel (0.3.9), anyhow (1.0.45), libc (0.2.107), exec-target (0.2.4), flood-tide-gen (0.1.15), rust-version-info-file (0.1.3)
 
-## [0.1.32] (2021-09-11)
+## [0.1.32] - 2021-09-11
+
 ### Added
-* add depends: indoc(1.0.3)
+- Dependency: indoc (1.0.3)
 
 ### Changed
-* pass cargo clippy
-* update depends: anyhow(1.0.43), flood-tide-gen(0.1.14), flood-tide(0.2.3), memx-cdy(0.1.6), runnel(0.3.8)
-* rewite TARGET_EXE_PATH with `env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")))`
-* update depends: exec-target(0.2.3)
+- Passed Cargo Clippy
+- Updated dependencies: anyhow (1.0.43), flood-tide-gen (0.1.14), flood-tide (0.2.3), memx-cdy (0.1.6), runnel (0.3.8), exec-target (0.2.3)
+- Rewrote `TARGET_EXE_PATH` with `env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")))`
 
-## [0.1.31] (2021-06-24)
+## [0.1.31] - 2021-06-24
+
 ### Added
-* `memx_cdy::memx_init(); // fast mem operation.`
+- `memx_cdy::memx_init()` for fast memory operations
 
 ### Changed
-* rewite TARGET_EXE_PATH with `env!("CARGO_BIN_EXE_aki-gsub")`
+- Rewrote `TARGET_EXE_PATH` with `env!("CARGO_BIN_EXE_aki-gsub")`
 
 ### Fixed
-* bug: `#[cfg(feature = "debian_build")]`
+- Bug: `#[cfg(feature = "debian_build")]`
 
-## [0.1.30] (2021-06-03)
+## [0.1.30] - 2021-06-03
+
 ### Added
-* support features = \["debian_build"\]
+- Support for `features = ["debian_build"]`
 
 ### Changed
-* update depends: flood-tide(0.2.2)
-* update depends: regex(1.5.4)
+- Updated dependencies: flood-tide (0.2.2), regex (1.5.4)
 
 ### Fixed
-* bug: command option: -X rust-version-info
+- Bug: command option `-X rust-version-info`
 
-## [0.1.29] (2021-04-23)
+## [0.1.29] - 2021-04-23
+
 ### Added
-* command option: -X
+- Command option `-X`
 
 ### Changed
-* update depends: flood-tide-gen(0.1.12), flood-tide(0.2.1)
-* update depends: bug fix: regex(1.4.6)
+- Updated dependencies: flood-tide-gen (0.1.12), flood-tide (0.2.1)
+- Bug fix update: regex (1.4.6)
 
-## [0.1.28] (2021-04-19)
+## [0.1.28] - 2021-04-19
+
 ### Changed
-* update depends: flood-tide-gen(0.1.10)
+- Updated dependency: flood-tide-gen (0.1.10)
 
-## [0.1.27] (2021-04-07)
+## [0.1.27] - 2021-04-07
+
 ### Changed
-* update depends: flood-tide(0.2)
-* update depends: anyhow(1.0.40), flood-tide-gen(0.1.8), runnnel(0.3.6)
+- Updated dependency: flood-tide (0.2)
+- Updated dependencies: anyhow (1.0.40), flood-tide-gen (0.1.8), runnel (0.3.6)
 
-## [0.1.26] (2021-03-22)
+## [0.1.26] - 2021-03-22
+
 ### Added
-* `--color <when>`
-* some contents to `--help`
+- `--color <when>`
+- Content to `--help`
 
 ### Changed
-* update depend: regex v1.4.5: fixes stack overflows
+- Updated dependency: regex 1.4.5 (fixes stack overflows)
 
-## [0.1.25] (2021-03-14)
+## [0.1.25] - 2021-03-14
+
 ### Changed
-* update crate: regex: fix memory leak
+- Updated dependency: regex (fix memory leak)
 
-## [0.1.24] (2021-03-08)
+## [0.1.24] - 2021-03-08
+
 ### Changed
-* update crate: runnel
-* update crate: rustc_version ("0.3")
+- Updated dependency: runnel
+- Updated dependency: rustc_version (0.3)
 
-## [0.1.23] (2021-03-08)
+## [0.1.23] - 2021-03-08
+
 ### Changed
-* update crate: runnel
-* rename file: xtask/src/cmd.txt to xtask/src/aki-gsub-cmd.txt
-* cleanup src/main.rs and build.rs
+- Updated dependency: runnel
+- Renamed file: `xtask/src/cmd.txt` to `xtask/src/aki-gsub-cmd.txt`
+- Cleanup `src/main.rs` and `build.rs`
 
-## [0.1.22] (2021-03-02)
+## [0.1.22] - 2021-03-02
+
 ### Added
-* some documents
+- More documentation
 
 ### Changed
-* change option: `-e, --expression` to `-e, --exp`
-* update crate: flood-tide-gen
+- Changed option: `-e, --expression` to `-e, --exp`
+- Updated dependency: flood-tide-gen
 
-## [0.1.21] (2021-02-22)
+## [0.1.21] - 2021-02-22
+
 ### Added
-* more doc
+- More documentation
 
 ### Changed
-* update crate: runnel, flood-tide-gen
+- Updated dependencies: runnel, flood-tide-gen
 
 ### Fixed
-* bug: add flush() on finish.
+- Bug: added `flush()` on finish
 
-## [0.1.20] (2021-02-14)
+## [0.1.20] - 2021-02-14
+
 ### Added
-* doc
+- Documentation
 
 ### Changed
-* update crate runnel
-* rename section "AAA-admin" to "AAA-text" of package.metadata.deb
+- Updated dependency: runnel
+- Renamed section "AAA-admin" to "AAA-text" of `package.metadata.deb`
 
-## [0.1.19] (2021-02-07)
+## [0.1.19] - 2021-02-07
+
 ### Changed
-* update crates flood-tide-gen
+- Updated dependency: flood-tide-gen
 
-## [0.1.18] (2021-02-05)
+## [0.1.18] - 2021-02-05
+
 ### Changed
-* update crates for runnel
+- Updated dependency: runnel
 
-## [0.1.17] (2021-02-05)
+## [0.1.17] - 2021-02-05
+
 ### Fixed
-* bug: README.md
+- Bug in `README.md`
 
-## [0.1.16] (2021-02-05)
+## [0.1.16] - 2021-02-05
+
 ### Changed
-* initial github
+- Initial GitHub release
 
-## 0.1.15 (2021-02-05)
+## 0.1.15 - 2021-02-05
+
 ### Added
-* import crate exec-target from local, for test.
+- Import crate `exec-target` from local for testing
 
-## 0.1.14 (2021-01-31)
+## 0.1.14 - 2021-01-31
+
 ### Changed
-* change AppError to anyhow::Error
-* change conf parser to flood-tied and flood-tied-gen
-* some refactoring
+- Changed `AppError` to `anyhow::Error`
+- Changed configuration parser to `flood-tide` and `flood-tide-gen`
+- General refactoring
 
-## 0.1.13 (2021-01-24)
+## 0.1.13 - 2021-01-24
+
 ### Added
-* `matches!()` macro support before rustc 1.42.0
-* `cfg(has_fat_stdout)` and test support before rustc 1.44.0
+- `matches!()` macro support before rustc 1.42.0
+- `cfg(has_fat_stdout)` and test support before rustc 1.44.0
 
-## 0.1.12 (2021-01-24)
+## 0.1.12 - 2021-01-24
+
 ### Added
-* add `pipeio`
+- `pipeio`
 
 ### Changed
-* rename `streamio` to `runnel`
+- Renamed `streamio` to `runnel`
 
-## 0.1.11 (2021-01-22)
+## 0.1.11 - 2021-01-22
+
 ### Changed
-* refactoring stream module
+- Refactored `stream` module
 
-## 0.1.10 (2021-01-19)
+## 0.1.10 - 2021-01-19
+
 ### Added
-* add tests with stream module
+- Tests with `stream` module
 
-## 0.1.9 (2021-01-17)
+## 0.1.9 - 2021-01-17
+
 ### Added
-* add xtask
-* add stream module
+- `xtask`
+- `stream` module
 
 ### Changed
-* change optpa_util_1 to flood-tide
+- Changed `optpa_util_1` to `flood-tide`
 
-## 0.1.8 (2020-12-29)
+## 0.1.8 - 2020-12-29
+
 ### Changed
-* update crates
+- Updated dependencies
 
 ### Removed
-* remove optpaerr-1
+- Removed `optpaerr-1`
 
-## 0.1.7 (2020-11-17)
+## 0.1.7 - 2020-11-17
+
 ### Added
-* add `README.md`, `COPYING`, `LICENSE-APACHE`, `LICENSE-MIT`
+- `README.md`, `COPYING`, `LICENSE-APACHE`, `LICENSE-MIT`
 
 ### Changed
-* change optpa_util to optpa_util_1
+- Changed `optpa_util` to `optpa_util_1`
 
 ### Fixed
-* fix old version: rustc_version(=0.2.3), v0.3.0 is not compile new semver on deb10-buster
+- Fixed old version: `rustc_version` (=0.2.3), v0.3.0 does not compile new semver on deb10-buster
 
-## 0.1.6 (2020-08-09)
+## 0.1.6 - 2020-08-09
+
 ### Added
-* add support `cargo deb`
+- Support for `cargo deb`
 
 ### Changed
-* update crates
+- Updated dependencies
 
-## 0.1.5 (2020-05-10)
+## 0.1.5 - 2020-05-10
+
 ### Changed
-* change edition 2015 to 2018.
-* update crates
+- Changed Edition 2015 to 2018
+- Updated dependencies
 
-## 0.1.4 (2020-03-30)
+## 0.1.4 - 2020-03-30
+
 ### Added
-* add support broken pipe and test
+- Support for broken pipe and corresponding tests
 
 ### Changed
-* update crates
+- Updated dependencies
 
-## 0.1.3 (2019-04-14)
+## 0.1.3 - 2019-04-14
+
 ### Added
-* add support std::alloc
+- Support for `std::alloc`
 
 ### Changed
-* update crates
+- Updated dependencies
 
-## 0.1.2 (2018-05-04)
+## 0.1.2 - 2018-05-04
+
 ### Added
-* add support cfg(has_global_allocator)
+- Support for `cfg(has_global_allocator)`
 
 ### Changed
-* update crates
+- Updated dependencies
 
-## 0.1.1 (2018-03-22)
+## 0.1.1 - 2018-03-22
+
 ### Added
-* add support broken pipe
-* a lot of things
+- Support for broken pipe
+- Miscellaneous additions
 
 ### Changed
-* update crates
+- Updated dependencies
 
-## 0.1.0 (2017-12-12)
-* first commit
+## 0.1.0 - 2017-12-12
+
+### Added
+- First commit
 
 [Unreleased]: https://github.com/aki-akaguma/aki-gsub/compare/v0.2.1..HEAD
 [0.2.1]: https://github.com/aki-akaguma/aki-gsub/compare/v0.2.0..v0.2.1
@@ -381,4 +400,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.18]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.17..v0.1.18
 [0.1.17]: https://github.com/aki-akaguma/aki-gsub/compare/v0.1.16..v0.1.17
 [0.1.16]: https://github.com/aki-akaguma/aki-gsub/releases/tag/v0.1.16
-releases/tag/v0.1.16
