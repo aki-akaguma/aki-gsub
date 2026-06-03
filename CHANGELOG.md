@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optimize regex substitution logic by removing redundant `is_match` calls
 - Refactor coloring logic into a reusable `colorize` utility function
 - Optimize memory allocation in `do_match_proc` by reusing a line buffer
+- Update crates: assert-text (0.3), exec-target (0.3)
 
 ## [0.2.1] - 2026-05-18
 

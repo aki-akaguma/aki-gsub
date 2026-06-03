@@ -36,8 +36,8 @@ runnel = "0.4"
 
 [dev-dependencies]
 indoc = "2.0"
-assert-text = "0.2"
-exec-target = "0.2"
+assert-text = "0.3"
+exec-target = "0.3"
 
 [build-dependencies]
 rust-version-info-file = "0.2"

@@ -13,35 +13,35 @@ mod test_0_e {
     //
     #[test]
     fn test_help() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-H"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-H"]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, help_msg!());
         assert!(oup.status.success());
     }
     #[test]
     fn test_help_long() {
-        let oup = exec_target(TARGET_EXE_PATH, ["--help"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--help"]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, help_msg!());
         assert!(oup.status.success());
     }
     #[test]
     fn test_version() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-V"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-V"]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, version_msg!());
         assert!(oup.status.success());
     }
     #[test]
     fn test_version_long() {
-        let oup = exec_target(TARGET_EXE_PATH, ["--version"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--version"]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, version_msg!());
         assert!(oup.status.success());
     }
     #[test]
     fn test_invalid_opt() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-z"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-z"]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -57,7 +57,7 @@ mod test_0_e {
     }
     #[test]
     fn test_non_option() {
-        let oup = exec_target(TARGET_EXE_PATH, [""]);
+        let oup = exec_target(TARGET_EXE_PATH, [""]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -73,7 +73,7 @@ mod test_0_e {
     }
     #[test]
     fn test_opt_color() {
-        let oup = exec_target(TARGET_EXE_PATH, ["--color"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--color"]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -89,7 +89,7 @@ mod test_0_e {
     }
     #[test]
     fn test_opt_color_invalid() {
-        let oup = exec_target(TARGET_EXE_PATH, ["--color", "red"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--color", "red"]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -105,7 +105,7 @@ mod test_0_e {
     }
     #[test]
     fn test_opt_color_auto() {
-        let oup = exec_target(TARGET_EXE_PATH, ["--color", "auto"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--color", "auto"]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -120,7 +120,7 @@ mod test_0_e {
     }
     #[test]
     fn test_no_format() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-e", "."]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-e", "."]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -135,7 +135,7 @@ mod test_0_e {
     }
     #[test]
     fn test_no_pair_format() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-e", "a", "-e", "b", "-f", "X"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-e", "a", "-e", "b", "-f", "X"]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -156,7 +156,7 @@ mod test_0_x_options_e {
     //
     #[test]
     fn test_x_option() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-X"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-X"]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -173,7 +173,7 @@ mod test_0_x_options_e {
     //
     #[test]
     fn test_x_option_help() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help"]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, x_help_msg!());
         assert!(oup.status.success());
@@ -182,7 +182,7 @@ mod test_0_x_options_e {
     #[test]
     fn test_x_option_rust_version_info() {
         use assert_text::assert_text_match;
-        let oup = exec_target(TARGET_EXE_PATH, ["-X", "rust-version-info"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "rust-version-info"]).unwrap();
         assert_eq!(oup.stderr, "");
         assert!(oup.stdout.contains("rustc"));
         assert_text_match!(&oup.stdout, x_rvi_msg!());
@@ -191,7 +191,7 @@ mod test_0_x_options_e {
     //
     #[test]
     fn test_multiple_x_options() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help", "-X", "rust-version-info"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "help", "-X", "rust-version-info"]).unwrap();
         assert_eq!(oup.stderr, "");
         // The first one should be executed and the program should exit.
         assert!(oup.stdout.contains("Options:"));
@@ -201,7 +201,7 @@ mod test_0_x_options_e {
     //
     #[test]
     fn test_x_option_invalid() {
-        let oup = exec_target(TARGET_EXE_PATH, ["-X", "red"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-X", "red"]).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(
@@ -224,7 +224,7 @@ mod test_1_e {
     #[test]
     fn test_invalid_utf8() {
         let v = std::fs::read(fixture_invalid_utf8!()).unwrap();
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "x"], &v);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "x"], &v).unwrap();
         assert_eq!(
             oup.stderr,
             concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
@@ -235,7 +235,8 @@ mod test_1_e {
     //
     #[test]
     fn test_t1() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "1"], b"abcabca" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "1"], b"abcabca" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "1bc1bc1\n");
         assert!(oup.status.success());
@@ -247,7 +248,8 @@ mod test_1_e {
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "${1}"],
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "bba\n");
         assert!(oup.status.success());
@@ -259,7 +261,8 @@ mod test_1_e {
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "$1"],
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "bba\n");
         assert!(oup.status.success());
@@ -271,7 +274,8 @@ mod test_1_e {
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "${0}"],
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abcabca\n");
         assert!(oup.status.success());
@@ -283,7 +287,8 @@ mod test_1_e {
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "${2}"],
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "a\n");
         assert!(oup.status.success());
@@ -301,7 +306,8 @@ mod test_1_color_e {
             ["-e", "a", "-f", "1", "--color", "always"],
             env_1!(),
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S>1<E>bc<S>1<E>bc<S>1<E>\n");
         assert!(oup.status.success());
@@ -314,7 +320,8 @@ mod test_1_color_e {
             ["-e", "a(b)c", "-f", "${1}", "--color", "always"],
             env_1!(),
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S>b<E><S>b<E>a\n");
         assert!(oup.status.success());
@@ -327,7 +334,8 @@ mod test_1_color_e {
             ["-e", "a(b)c", "-f", "${0}", "--color", "always"],
             env_1!(),
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S>abc<E><S>abc<E>a\n");
         assert!(oup.status.success());
@@ -340,7 +348,8 @@ mod test_1_color_e {
             ["-e", "a(b)c", "-f", "${2}", "--color", "always"],
             env_1!(),
             b"abcabca" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<S><E><S><E>a\n");
         assert!(oup.status.success());
@@ -357,7 +366,8 @@ mod test_2_e {
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "1"],
             b"abcabca\noooooo\nabcabca\n" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "1bc1bc1\noooooo\n1bc1bc1\n");
         assert!(oup.status.success());
@@ -369,7 +379,8 @@ mod test_2_e {
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "1", "-n"],
             b"abcabca\noooooo\nabcabca\n" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "1bc1bc1\n1bc1bc1\n");
         assert!(oup.status.success());
@@ -387,7 +398,8 @@ mod test_2_color_e {
             ["-e", "a", "-f", "1", "--color", "always"],
             env_1!(),
             b"abcabca\noooooo\nabcabca\n" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(
             oup.stdout,
@@ -403,7 +415,8 @@ mod test_2_color_e {
             ["-e", "a", "-f", "1", "-n", "--color", "always"],
             env_1!(),
             b"abcabca\noooooo\nabcabca\n" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(
             oup.stdout,
@@ -424,7 +437,7 @@ mod test_3_e {
             fixture_text10k!(),
             TARGET_EXE_PATH
         );
-        let oup = exec_target("sh", ["-c", &cmdstr]);
+        let oup = exec_target("sh", ["-c", &cmdstr]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "aBCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
@@ -449,7 +462,8 @@ mod test_4_e {
                 "-f",
                 "${2} :: ${0}",
             ],
-            b"001cea1eef55.softphone.blizoo.bg\n" as &[u8]);
+            b"001cea1eef55.softphone.blizoo.bg\n" as &[u8]
+        ).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(
             oup.stdout,
@@ -464,7 +478,8 @@ mod test_4_e {
             TARGET_EXE_PATH,
             ["-e", "ICON=\"[^\"]*\"", "-f", ""],
             b"abc ICON=\"ABCDEFG\" defg\n" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abc  defg\n");
         assert!(oup.status.success());
@@ -482,7 +497,8 @@ mod test_4_more_e {
             TARGET_EXE_PATH,
             ["-e", "A", "-f", "b"],
             long_string.as_bytes(),
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert!(oup.stdout.contains("bBCDEFG"));
         assert!(oup.status.success());
@@ -496,7 +512,8 @@ mod test_4_more_e {
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "b"],
             long_string.as_bytes(),
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, expected_output);
         assert!(oup.status.success());
@@ -513,7 +530,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "b\nc"],
             b"daded" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "db\ncded\n");
         assert!(oup.status.success());
@@ -525,7 +543,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "b\tc"],
             b"daded" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "db\tcded\n");
         assert!(oup.status.success());
@@ -533,7 +552,8 @@ mod test_5_replace_e {
     //
     #[test]
     fn test_replace_with_dollar() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "$$"], b"daded" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "$$"], b"daded" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "d$ded\n");
         assert!(oup.status.success());
@@ -541,7 +561,8 @@ mod test_5_replace_e {
     //
     #[test]
     fn test_unicode_input() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "ü", "-f", "ue"], "fübar".as_bytes());
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "ü", "-f", "ue"], "fübar".as_bytes())
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "fuebar\n");
         assert!(oup.status.success());
@@ -549,7 +570,8 @@ mod test_5_replace_e {
     //
     #[test]
     fn test_unicode_replacement() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "u", "-f", "ü"], b"fubar" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "u", "-f", "ü"], b"fubar" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "fübar\n");
         assert!(oup.status.success());
@@ -561,7 +583,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-n", "-e", "z", "-f", "y"],
             b"abc" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "");
         assert!(oup.status.success());
@@ -573,7 +596,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-e", "a", "-f", "b", "-e", "c", "-f", "d"],
             b"abc" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "bbd\n");
         assert!(oup.status.success());
@@ -581,7 +605,8 @@ mod test_5_replace_e {
     //
     #[test]
     fn test_literal_backslash() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "\\"], b"bac" as &[u8]);
+        let oup =
+            exec_target_with_in(TARGET_EXE_PATH, ["-e", "a", "-f", "\\"], b"bac" as &[u8]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "b\\c\n");
         assert!(oup.status.success());
@@ -593,7 +618,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-e", "([a-z]+)-([0-9]+)", "-f", "${2}-${1}"],
             b"abc-123 xyz-456" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "123-abc 456-xyz\n");
         assert!(oup.status.success());
@@ -605,7 +631,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-e", "(a)b(c)", "-f", "${2}${1}"],
             b"abc" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ca\n");
         assert!(oup.status.success());
@@ -617,7 +644,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-e", "a(b)c", "-f", "x${1}y"],
             b"abcde" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "xbyde\n");
         assert!(oup.status.success());
@@ -629,7 +657,8 @@ mod test_5_replace_e {
             TARGET_EXE_PATH,
             ["-e", "(a)(b)(c)", "-f", "${3}${2}${1}"],
             b"abc" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "cba\n");
         assert!(oup.status.success());
@@ -642,7 +671,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_overlapping_matches() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "aba", "-f", "x"], b"ababa" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "aba", "-f", "x"], b"ababa" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "xba\n");
         assert!(oup.status.success());
@@ -650,7 +680,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_case_insensitive() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "(?i)a", "-f", "b"], b"AbC" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "(?i)a", "-f", "b"], b"AbC" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "bbC\n");
         assert!(oup.status.success());
@@ -658,7 +689,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_empty_match_begin() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "^", "-f", "x"], b"abc" as &[u8]);
+        let oup =
+            exec_target_with_in(TARGET_EXE_PATH, ["-e", "^", "-f", "x"], b"abc" as &[u8]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "xabc\n");
         assert!(oup.status.success());
@@ -666,7 +698,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_empty_match_end() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "$", "-f", "x"], b"abc" as &[u8]);
+        let oup =
+            exec_target_with_in(TARGET_EXE_PATH, ["-e", "$", "-f", "x"], b"abc" as &[u8]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abcx\n");
         assert!(oup.status.success());
@@ -678,7 +711,8 @@ mod test_6_regex_e {
             TARGET_EXE_PATH,
             ["-e", "a{2,3}", "-f", "x"],
             b"aaabaaba" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "xbxba\n");
         assert!(oup.status.success());
@@ -686,7 +720,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_alternation_regex() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a|b", "-f", "x"], b"abc" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a|b", "-f", "x"], b"abc" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "xxc\n");
         assert!(oup.status.success());
@@ -694,7 +729,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_character_class_regex() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "[ab]", "-f", "x"], b"abc" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "[ab]", "-f", "x"], b"abc" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "xxc\n");
         assert!(oup.status.success());
@@ -706,7 +742,8 @@ mod test_6_regex_e {
             TARGET_EXE_PATH,
             ["-e", "\\ba\\b", "-f", "x"],
             b"a ab a" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "x ab x\n");
         assert!(oup.status.success());
@@ -714,7 +751,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_non_capturing_group_regex() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "(?:a)b", "-f", "x"], b"ab" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "(?:a)b", "-f", "x"], b"ab" as &[u8])
+            .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "x\n");
         assert!(oup.status.success());
@@ -726,7 +764,8 @@ mod test_6_regex_e {
             TARGET_EXE_PATH,
             ["-e", "a.*b", "-f", "x"],
             b"acbacb" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "x\n");
         assert!(oup.status.success());
@@ -738,7 +777,8 @@ mod test_6_regex_e {
             TARGET_EXE_PATH,
             ["-e", "a.*?b", "-f", "x"],
             b"acbacd" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "xacd\n");
         assert!(oup.status.success());
@@ -746,7 +786,8 @@ mod test_6_regex_e {
     //
     #[test]
     fn test_possessive_quantifier_regex() {
-        let oup = exec_target_with_in(TARGET_EXE_PATH, ["-e", "a*+", "-f", "x"], b"aa" as &[u8]);
+        let oup =
+            exec_target_with_in(TARGET_EXE_PATH, ["-e", "a*+", "-f", "x"], b"aa" as &[u8]).unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "x\n");
         assert!(oup.status.success());
@@ -763,7 +804,8 @@ mod test_6_regex_e {
                 "${second}-${first}",
             ],
             b"abc-123" as &[u8],
-        );
+        )
+        .unwrap();
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "123-abc\n");
         assert!(oup.status.success());
@@ -780,7 +822,8 @@ mod test_6_regex_unsupport_e {
             TARGET_EXE_PATH,
             ["-e", "a(?=b)", "-f", "x"],
             b"abac" as &[u8],
-        );
+        )
+        .unwrap();
         // aki-gsub: regex parse error:
         //     a(?=b)
         //      ^^^
@@ -797,7 +840,8 @@ mod test_6_regex_unsupport_e {
             TARGET_EXE_PATH,
             ["-e", "(?<=b)a", "-f", "x"],
             b"baca" as &[u8],
-        );
+        )
+        .unwrap();
         // aki-gsub: regex parse error:
         //     (?<=b)a
         //     ^^^^
@@ -814,7 +858,8 @@ mod test_6_regex_unsupport_e {
             TARGET_EXE_PATH,
             ["-e", "(?>ab|a)c", "-f", "x"],
             b"abc" as &[u8],
-        );
+        )
+        .unwrap();
         // aki-gsub: regex parse error:
         //     (?>ab|a)c
         //       ^
@@ -831,7 +876,8 @@ mod test_6_regex_unsupport_e {
             TARGET_EXE_PATH,
             ["-e", "(?P<name>a)b\\k<name>", "-f", "x"],
             b"aba" as &[u8],
-        );
+        )
+        .unwrap();
         // aki-gsub: regex parse error:
         //     (?P<name>a)b\k<name>
         //                 ^^
